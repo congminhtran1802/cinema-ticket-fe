@@ -1,0 +1,10 @@
+.form-edit{
+    width: 200px;
+    height: 200px;
+    background-color: white;
+}
+.popup{
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
