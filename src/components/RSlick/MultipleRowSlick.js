@@ -32,12 +32,12 @@ function SamplePrevArrow(props) {
 
 
 const MultipleRows = (props) => {
-  console.log("props.arrFilm:", props.arrFilm);
+  console.log("props.arrFilm:", props.dataHome);
 
   const dispatch = useDispatch();
-  const {dangChieu,sapChieu} = useSelector(state => state.QuanLyPhimReducer);
+  // const {dangChieu,sapChieu} = useSelector(state => state.QuanLyPhimReducer);
   const renderFilms = () => {
-    return props.arrFilm.slice(0, 12).map((item, index) => {
+    return props.dataHome.slice(0, 12).map((item, index) => {
       return (
         // <div className={`${styleSlick['width-item']}`} key={index}>
         //     <Film_Flip phim={item}/>
@@ -51,9 +51,13 @@ const MultipleRows = (props) => {
     });
   };
 
-  let activeClassDC = dangChieu === true ? "active_Film" : "none_active_Film";
+  // let activeClassDC = dangChieu === true ? "active_Film" : "none_active_Film";
 
-  let activeClassSC = sapChieu === true ? "active_Film" : "none_active_Film";
+  // let activeClassSC = sapChieu === true ? "active_Film" : "none_active_Film";
+
+  let activeClassDC = true
+
+  let activeClassSC = true
 
   console.log("activeSC", activeClassSC);
   const settings = {

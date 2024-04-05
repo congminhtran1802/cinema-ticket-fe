@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { TextField } from "@material-ui/core";
+import TextField from '@mui/material/TextField';
 
 export default function Form(props) {
     const { onSubmit, film, forceUpdate} = props;

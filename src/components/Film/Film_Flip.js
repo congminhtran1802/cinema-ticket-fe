@@ -2,28 +2,61 @@ import React from 'react'
 import { PlayCircleOutlined } from '@ant-design/icons'
 import './Film_Flip.css'
 import { history } from '../../App';
+import { useEffect, useRef, useState } from 'react';
 
 export default function Film_Flip(props) {
     const handleReload = () => {
-        history.push(`/detail/${phim.maPhim}`); 
+        history.push(`/detail/${phim.id}`);
         window.location.reload();
-      };
+    };
     const { phim } = props;
+
+    const [showVideo, setShowVideo] = useState(false);
+    const iframeRef = useRef(null);
+
+    const handleClick = () => {
+        setShowVideo(true);
+    };
 
     return (
         <div className="flip-card mt-2">
             <div className="flip-card-inner">
                 <div className="flip-card-front">
-                    <img src={phim.hinhAnh} alt="Avatar" style={{ width: 260, height: 300 }} onError={e => {e.target.onerror=null;e.target.src='https://picsum.photos/300/300';}} />
+                    <img src={phim.smallImageURl} alt="Avatar" style={{ width: 260, height: 300 }} onError={e => { e.target.onerror = null; e.target.src = 'https://picsum.photos/300/300'; }} />
                 </div>
                 <div className="flip-card-back" style={{ position: 'relative', backgroundColor: 'rgba(0,0,0,.9)' }}>
-                    <div style={{ position: 'absolute', top: 0, left: 0 }} >
-                        <img src={phim.hinhAnh} alt="Avatar" style={{ width: 260, height: 300 }} onError={e => {e.target.onerror=null;e.target.src='https://picsum.photos/300/300';}} />
+                    <div style={{ position: 'absolute' }}>
+                        {!showVideo && (
+                            <img
+                                src={phim.smallImageURl}
+                                alt="Avatar"
+                                style={{ width: 260, height: 300 }}
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = 'https://picsum.photos/300/300';
+                                }}
+                            />
+                        )}
+                        {showVideo && (
+                            <iframe
+                                className="absolute"
+                                ref={iframeRef}
+                                width="260"
+                                height="300"
+                                src={phim.trailerURL}
+                                title="YouTube video player"
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                referrerPolicy="strict-origin-when-cross-origin"
+                                allowFullScreen
+                                style={{ position: 'absolute', top: 0, left: 0, zIndex: 9999 }}
+                            ></iframe>
+                        )}
                     </div>
                     <div className="w-full h-full" style={{ position: 'absolute', backgroundColor: 'rgba(0,0,0,.5)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                        <div>
+                        <div onClick={handleClick}>
                             <div className="rounded-full cursor-pointer"><PlayCircleOutlined style={{ fontSize: '50px' }} /></div>
-                            <div className="text-2xl mt-2 font-bold">{phim.tenPhim}</div>
+                            <div className="text-2xl mt-2 font-bold">{phim.name}</div>
                         </div>
                     </div>
                 </div>
@@ -37,6 +70,7 @@ export default function Film_Flip(props) {
                 </NavLink>
             </div> */}
         </div>
+
 
     )
 }

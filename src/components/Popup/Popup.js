@@ -1,8 +1,9 @@
-import { Dialog, DialogTitle } from "@material-ui/core";
+import DialogTitle from '@mui/material/DialogTitle';
+import Dialog from '@mui/material/Dialog';
 import React from "react";
 import { useState } from "react";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from "@mui/material/DialogActions";
 import { useSelector, useDispatch } from "react-redux";
 import { editPhim } from "../../redux/actions/QuanLyPhimAction";
 import Form from "../Form/Form";

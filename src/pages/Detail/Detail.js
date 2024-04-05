@@ -5,34 +5,39 @@ import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useParams } from "react-router-dom";
 import { layThongTinChiTietPhim } from "../../redux/actions/QuanLyRapAction";
 import moment from "moment";
+import axios from "axios";
+import { dataDetailSelector } from "../../redux-toolkit/selector";
+import { dataDetailSlice } from "../../redux-toolkit/reducer/dataDetailSlice";
 const { TabPane } = Tabs;
 export default function Detail(props) {
-  const filmDetail = useSelector(state => (state.QuanLyPhimReducer.filmDetail));
+  
 
   const dispatch = useDispatch();
-  // const { id } = useParams();
-  // console.log("ID:", id);
-
-  // useEffect(() => {
-  //   if (id) {
-  //     dispatch(layThongTinChiTietPhim(id));
-  //   }
-  // }, [id, dispatch]);
-
   const { id } = useParams();
+  console.log("ID:", id);
 
   useEffect(() => {
+    dispatch(dataDetailSlice.actions.getDataDetailRequest());
     if (id) {
-      dispatch(layThongTinChiTietPhim(id));
+      axios.get(`http://localhost:8080/api/movies/details?movieId=${id}`)
+        .then((res) => {
+          console.log("res:", res.data);
+          dispatch(dataDetailSlice.actions.getDataDetailSuccess(res.data));
+        })
+        .catch((err) => {
+          dispatch(dataDetailSlice.actions.getDataDetailFailure());
+          console.log(err);
+        });
     }
-  }, [id, dispatch]);
+  }, [id]);
 
-  console.log('filmDetail', filmDetail);
+  const { dataDetail, isLoading } = useSelector(dataDetailSelector);
+
 
   return (
     <div
       style={{
-        backgroundImage: `url(${filmDetail.hinhAnh})`,
+        backgroundImage: `url(${dataDetail.smallImageURl})`,
         backgroundSize: '100%',
         backgroundPosition: 'center',
         minHeigh: "100vh",
@@ -49,45 +54,40 @@ export default function Detail(props) {
         }}
       >
         <div className="grid grid-cols-12">
-          <div className="col-span-5 col-start-3">
+          <div className="col-span-6 col-start-4">
             <div className="grid grid-cols-3 items-center">
-              {filmDetail && (
+              {dataDetail && (
                 <>
-                  <img className="col-span-1" src={filmDetail.hinhAnh} alt={filmDetail.tenPhim} />
-                  <div className="col-span-2 ml-5">
-                    <p className="text-sm">{moment(filmDetail.ngayKhoiChieu).format('DD.MM.YYYY')}</p>
-                    <div className="flex my-2">
-                      <p className="px-1 py-0.5 bg-red-600 rounded-sm text-center mr-2">C20</p>
-                      <p className="text-xl">{filmDetail.tenPhim}</p>
+                    <img className="col-span-1" src={dataDetail.smallImageURl} alt={dataDetail.name} />
+                    <div className="col-span-2 ml-5 bg-gray-900 bg-opacity-35 p-4 rounded-xl">
+                      <p className="p-4 text-2xl font-bold border-b-2 border-white/30 box-border">{dataDetail.name}</p>
+                      <div className="p-4">
+                        <p className="text-white"><b className="text-yellow-300">Đạo diễn:</b> {dataDetail.director}</p>
+                        <p className="text-white"><b className="text-yellow-300">Diễn viên:</b> {dataDetail.actors}</p>
+                        <p className="text-white"><b className="text-yellow-300">Thể loại:</b> {dataDetail.categories}</p>
+                        <p className="text-white"><b className="text-yellow-300">Khởi chiếu:</b> {moment(dataDetail.ngayKhoiChieu).format('DD/MM/YYYY')}</p>
+                        <p className="text-white"><b className="text-yellow-300">Thời lượng:</b> {dataDetail.duration} phút</p>
+                        <p className="text-white"><b className="text-yellow-300">Ngôn ngữ:</b> {dataDetail.language}</p>
+                        <p className="text-white"><b className="text-yellow-300">Rated:</b> {dataDetail.rated}</p>
+                      </div>
                     </div>
-                    <p>120 phút - 10 Tix - 2D/Digital</p>
-                    {filmDetail.moTa && (
-                      <p className="mt-2">{filmDetail.moTa.slice(0, 300)}...</p>
-                    )}
-                  </div>
+                    <div className="col-span-3 mt-5 bg-gray-900 bg-opacity-35 p-4 rounded-xl">
+                      <p className="text-white text-2xl font-bold">Nội dung</p>
+                      <p className="text-white">{dataDetail.shortDescription}</p>
+                    </div>
+
                 </>
               )}
             </div>
 
           </div>
-          <div className="col-span-4 my-10">
-            <div className={`c100 p${filmDetail.danhGia * 10} center`}>
-              <span>{filmDetail.danhGia * 10}</span>
-              <div className="slice">
-                <div className="bar"></div>
-                <div className="fill"></div>
-              </div>
-            </div>
-            <h1 className="mt-3 text-center">Đánh giá</h1>
-            <div className="mt-1 text-center"><Rate allowHalf value={filmDetail.danhGia / 2}></Rate></div>
-          </div>
         </div>
-        <div className="mt-10 mx-52 rounded-lg bg-white px-5 py-5" >
+        {/* <div className="mt-10 mx-52 rounded-lg bg-white px-5 py-5" >
           <Tabs defaultActiveKey="1" centered >
             <TabPane tab="Lịch chiếu" key="1" style={{ minHeight: 300 }}>
               <div >
                 <Tabs tabPosition={'left'} >
-                  {filmDetail.heThongRapChieu?.map((htr, index) => {
+                  {dataDetail.heThongRapChieu?.map((htr, index) => {
                     return <TabPane
                       tab={<div className="flex flex-row items-center justify-center">
                         <img src={htr.logo} className="rounded-full w-full" style={{ width: 50 }} alt="..." />
@@ -99,7 +99,7 @@ export default function Detail(props) {
                       {htr.cumRapChieu?.map((cumRap, index) => {
                         return <div className="mt-5" key={index}>
                           <div className="flex flex-row">
-                            <img style={{ width: 60, height: 60 }} src={cumRap.hinhAnh} alt="..." />
+                            <img style={{ width: 60, height: 60 }} src={cumRap.smallImageURl} alt="..." />
                             <div className="ml-2">
                               <p style={{ fontSize: 20, fontWeight: 'bold', lineHeight: 1 }} >{cumRap.tenCumRap}</p>
                               <p className="text-gray-400" style={{ marginTop: 0 }}>{cumRap.diaChi}</p>
@@ -126,7 +126,7 @@ export default function Detail(props) {
               Đánh giá
             </TabPane>
           </Tabs>
-        </div>
+        </div> */}
       </div>
     </div>
   );

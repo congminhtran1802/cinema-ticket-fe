@@ -2,9 +2,10 @@ import React, { useEffect } from "react";
 import { Carousel } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { getCarouselAction } from "../../../../redux/actions/CarouselAction";
+import { dataHomeSelector } from "../../../../redux-toolkit/selector";
 
 export default function HomeCarousel(props) {
-  const { arrImg } = useSelector(state => state.CarouselReducer);
+  const { dataHome, isLoading } = useSelector(dataHomeSelector);
 
   console.log("arrImg", props);
   const dispatch = useDispatch();
@@ -16,13 +17,13 @@ export default function HomeCarousel(props) {
     dispatch(getCarouselAction());
   }, []);
   const renderImg = () => {
-    return arrImg.map((item, index) => {
+    return dataHome.map((item, index) => {
       const contentStyle = {
         height: "490px",
         color: "#fff",
         lineHeight: "160px",
         textAlign: "center",
-        backgroundImage: `url(${item.hinhAnh})`,
+        backgroundImage: `url(${item.largeImageURL})`,
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
         backgroundSize: "100%",
@@ -31,9 +32,9 @@ export default function HomeCarousel(props) {
         <div key={index}>
           <div style={contentStyle}>
             <img
-              src={item.hinhAnh}
+              src={item.largeImageURL}
               className="w-full opacity-0"
-              alt={item.hinhAnh}
+              alt={item.largeImageURL}
             />
           </div>
         </div>
