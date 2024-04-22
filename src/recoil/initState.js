@@ -15,7 +15,7 @@ export const userLogin = atom({
 });
 export const tokenState = atom({
   key: "tokenState",
-  default: localStorage.getItem("token") || "",
+  default: localStorage.getItem("accessToken") || "",
 });
 
 export const initState = atom({
