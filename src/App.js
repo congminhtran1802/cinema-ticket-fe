@@ -40,7 +40,7 @@ import CheckoutTemplate from "./templates/CheckoutTemplate/CheckoutTemplate";
 import Checkout from "./pages/Checkout/Checkout";
 import { UserTemplate } from "./templates/UserTemplate/UserTemplate";
 import { AdminTemplate } from "./templates/AdminTemplate/AdminTemplate";
-
+import Search from "./pages/Search/Search";
 export const history = createBrowserHistory();
 
 function App() {
@@ -48,9 +48,9 @@ function App() {
     <Router history={history}>
       <Routes>
         <Route path="/" element={<HomeTemplate Component={Home} />} />
-        <Route path="/home" element={<HomeTemplate Component={Home} />} />
         <Route path="/contact" element={<HomeTemplate Component={Contact} />} />
         <Route path="/news" element={<HomeTemplate Component={News} />} />
+        <Route path="/search/:name" element={<HomeTemplate Component={Search} />} />
         <Route path="/detail/:id" element={<HomeTemplate Component={Detail} />} />
         <Route path="/register" element={<UserTemplate Component={Register}/>} />
         <Route path="/checkout/:id" element={<CheckoutTemplate Component={Checkout} />} />

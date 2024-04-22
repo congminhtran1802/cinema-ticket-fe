@@ -3,10 +3,7 @@ import Slider from "react-slick";
 // import Film from "../Film/Film";
 import Film_Flip from "../Film/Film_Flip";
 import { useDispatch, useSelector  } from "react-redux";
-import {
-  SET_FILM_DANG_CHIEU,
-  SET_FILM_SAP_CHIEU,
-} from "../../redux/actions/types/QuanLyPhimType";
+import { useEffect, useState } from "react";
 
 function SampleNextArrow(props) {
   const { className, style, onClick } = props;
@@ -33,18 +30,23 @@ function SamplePrevArrow(props) {
 
 const MultipleRows = (props) => {
   console.log("props.arrFilm:", props.dataHome);
+  const [dangChieu, setDangChieu] = useState(true);
+  const [dataFilm, setDataFilm] = useState(props.dataHome);
+
+  useEffect(() => {
+    if (dangChieu) {
+      setDataFilm(props.dataHome.filter((item) => item.isShowing == 1));
+    } else {
+      setDataFilm(props.dataHome.filter((item) => item.isShowing == 0));
+    }
+  }, [dangChieu, props.dataHome]);
 
   const dispatch = useDispatch();
-  // const {dangChieu,sapChieu} = useSelector(state => state.QuanLyPhimReducer);
   const renderFilms = () => {
-    return props.dataHome.slice(0, 12).map((item, index) => {
+    return dataFilm.slice(0, 12).map((item, index) => {
       return (
-        // <div className={`${styleSlick['width-item']}`} key={index}>
-        //     <Film_Flip phim={item}/>
-        // </div>
         <div className="mt-2" key={index}>
           <Film_Flip phim={item} />
-          {/* <Film phim={item}/> */}
         </div>
         
       );
@@ -55,9 +57,9 @@ const MultipleRows = (props) => {
 
   // let activeClassSC = sapChieu === true ? "active_Film" : "none_active_Film";
 
-  let activeClassDC = true
+  let activeClassDC = dangChieu === true ? "active_Film" : "none_active_Film";
 
-  let activeClassSC = true
+  let activeClassSC = dangChieu === false ? "active_Film" : "none_active_Film";
 
   console.log("activeSC", activeClassSC);
   const settings = {
@@ -65,10 +67,10 @@ const MultipleRows = (props) => {
     centerMode: true,
     infinite: true,
     centerPadding: "60px",
-    slidesToShow: 2,
+    slidesToShow: 1,
     speed: 500,
     rows: 2,
-    slidesPerRow: 2,
+    slidesPerRow: 4,
     variableWidth: true,
     nextArrow: <SampleNextArrow />,
     prevArrow: <SamplePrevArrow />,
@@ -78,8 +80,7 @@ const MultipleRows = (props) => {
       <button
         className={`${styleSlick[activeClassDC]} px-8 py-3 font-semibold rounded bg-gray-800 text-white mr-2`}
         onClick={() => {
-          const action = { type: SET_FILM_DANG_CHIEU };
-          dispatch(action);
+          setDangChieu(true);
         }}
       >
         PHIM ĐANG CHIẾU
@@ -87,8 +88,7 @@ const MultipleRows = (props) => {
       <button
         className={`${styleSlick[activeClassSC]} px-8 py-3 font-semibold rounded bg-white text-gray-800 border-gray-800 border`}
         onClick={() => {
-          const action = { type: SET_FILM_SAP_CHIEU };
-          dispatch(action);
+          setDangChieu(false);
         }}
       >
         PHIM SẮP CHIẾU

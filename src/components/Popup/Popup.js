@@ -7,12 +7,19 @@ import DialogActions from "@mui/material/DialogActions";
 import { useSelector, useDispatch } from "react-redux";
 import { editPhim } from "../../redux/actions/QuanLyPhimAction";
 import Form from "../Form/Form";
+import axios from 'axios';
+import Alert from 'antd/es/alert/Alert';
 export default function Popup(props) {
     const { title, children, openPopup, setOpenPopup, film, forceUpdate } = props;
     const dispatch = useDispatch();
     const onSubmit = (filmEdit) => {
-        const action = editPhim(filmEdit);
-        dispatch(action);
+        axios.put(`http://localhost:8080/api/movies/${filmEdit.id}`, filmEdit)
+        .then(function (response) {
+            forceUpdate();
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
         setOpenPopup(false);
     }
 

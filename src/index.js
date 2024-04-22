@@ -8,11 +8,15 @@ import store from "./redux-toolkit/store";
 import "antd";
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
-
+import { RecoilRoot } from "recoil";
+import i18nConfig from "./i18n";
+i18nConfig()
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Provider store={store}>
+  <RecoilRoot>
       <App />
+      </RecoilRoot>
   </Provider>
   
 );
