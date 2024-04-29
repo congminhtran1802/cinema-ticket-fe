@@ -112,7 +112,11 @@ export default function Header() {
 		</div> :
 		<div className="items-center justify-end flex-shrink-0 hidden lg:flex  w-[40%]">
 			
-			
+			<ul className="items-stretch hidden space-x-3 lg:flex">
+				<li className="flex">
+					<Link rel="noopener noreferrer" to="/ticket" className="flex items-center px-4 -mb-0.5  dark:border-transparent text-white" activeClassName="border-b-2 border-white">{t('Lịch sử đặt vé') }</Link>
+				</li>
+			</ul>
 			<Dropdown
 			overlay={
 			  <Menu>

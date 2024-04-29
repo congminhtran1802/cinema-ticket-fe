@@ -5,6 +5,7 @@ import { dataBranchSlice } from "./reducer/dataBranchSlice";
 import { dataScheduleSlice } from "./reducer/dataScheduleSlice";
 import { dataSearchSlice } from "./reducer/dataSearchSlice";
 import { userSlice } from "./reducer/loginSlice"
+import { dataTicketSlice } from "./reducer/dataTicketSlice";
 
 const store = configureStore({
   reducer: {
@@ -14,6 +15,8 @@ const store = configureStore({
     dataSchedule: dataScheduleSlice.reducer,
     dataSearch: dataSearchSlice.reducer,
     user: userSlice.reducer,
+    dataTicket: dataTicketSlice.reducer,
+
   },
 });
 

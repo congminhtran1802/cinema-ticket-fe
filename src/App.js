@@ -41,6 +41,8 @@ import Checkout from "./pages/Checkout/Checkout";
 import { UserTemplate } from "./templates/UserTemplate/UserTemplate";
 import { AdminTemplate } from "./templates/AdminTemplate/AdminTemplate";
 import Search from "./pages/Search/Search";
+import Ticket from "./pages/Ticket/Ticket";
+import { TicketTemplate } from "./templates/TicketTemplate/TicketTemplate";
 export const history = createBrowserHistory();
 
 function App() {
@@ -56,6 +58,7 @@ function App() {
         <Route path="/checkout/:id" element={<CheckoutTemplate Component={Checkout} />} />
         <Route path="/login" element={<UserTemplate Component={Login} />} />
         <Route path="/admin" element={<AdminTemplate Component={Admin} />} />
+        <Route path="/ticket" element={<TicketTemplate Component={Ticket} />} />
       </Routes>
     </Router>
   );

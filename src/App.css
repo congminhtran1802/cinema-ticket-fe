@@ -1,0 +1,5 @@
+.react-confirm-alert-button-group{
+    display: flex;
+    justify-content: flex-end !important;
+    margin-top: 20px;
+}
