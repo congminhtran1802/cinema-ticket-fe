@@ -1,29 +1,4 @@
-// import "./App.css";
-// import { createBrowserHistory } from "history";
-// import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
-// import { HomeTemplate } from "./templates/HomeTemplate/HomeTemplate";
-// import Home from "./pages/Home/Home";
-
-// export const history = createBrowserHistory();
-// // import BaiTapTongHop from "./BaiTapTongHop/BaiTapTongHop";
-
-// function App() {
-//   return (
-//     // <BaiTapTongHop />
-//     <Router>
-//       <Routes>
-//         <Route path="/" exact>
-//           <HomeTemplate  Component={Home} />
-//         </Route>
-//       </Routes>
-//     </Router>
-//   );
-// }
-
-// export default App;
-
-// App.js
 import "./App.css";
 import "./assets/styles/admin.css";
 import { createBrowserHistory } from "history";
@@ -43,6 +18,10 @@ import { AdminTemplate } from "./templates/AdminTemplate/AdminTemplate";
 import Search from "./pages/Search/Search";
 import Ticket from "./pages/Ticket/Ticket";
 import { TicketTemplate } from "./templates/TicketTemplate/TicketTemplate";
+import ListMovie from "./pages/Admin/ListMovie";
+import AddMovie from "./pages/Admin/AddMovie";
+import EditMovie from "./pages/Admin/EditMovie";
+import Popup from "./components/Popup/Popup";
 export const history = createBrowserHistory();
 
 function App() {
@@ -58,6 +37,12 @@ function App() {
         <Route path="/checkout/:id" element={<CheckoutTemplate Component={Checkout} />} />
         <Route path="/login" element={<UserTemplate Component={Login} />} />
         <Route path="/admin" element={<AdminTemplate Component={Admin} />} />
+        <Route path="/admin/" element={<AdminTemplate Component={Admin} />}>
+            <Route path="statistic" element={<HomeTemplate Component={Home} />} />
+            <Route path="list" element={<AdminTemplate Component={ListMovie} />} />
+            <Route path="add" element={<AdminTemplate Component={AddMovie} />} />
+            <Route path="update/:movieId" element={<AdminTemplate Component={EditMovie} />} />
+        </Route>
         <Route path="/ticket" element={<TicketTemplate Component={Ticket} />} />
       </Routes>
     </Router>

@@ -10,3 +10,24 @@ export const Alert = (timer, title, message, icon, confirmButtonText) => {
     confirmButtonText: confirmButtonText, //'OK'
   });
 };
+
+// delete
+export const DeleteAlert = (onDelete) => {
+  Swal.fire({
+    title: "Bạn chắc chắn muốn xóa?",
+    text: "Bạn sẽ không nhìn thấy phim này nữa!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Delete",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      onDelete(); // gọi hàm xóa
+      Swal.fire({
+        title: "Đã xóa!",
+        icon: "success",
+      });
+    }
+  });
+};

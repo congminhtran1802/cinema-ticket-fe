@@ -9,39 +9,18 @@ import { editPhim } from "../../redux/actions/QuanLyPhimAction";
 import Form from "../Form/Form";
 import axios from 'axios';
 import Alert from 'antd/es/alert/Alert';
+import EditMovie from '../../pages/Admin/EditMovie';
+import { useParams } from "react-router-dom";
 export default function Popup(props) {
-    const { title, children, openPopup, setOpenPopup, film, forceUpdate } = props;
-    const dispatch = useDispatch();
-    const onSubmit = (filmEdit) => {
-        axios.put(`http://localhost:8080/api/movies/${filmEdit.id}`, filmEdit)
-        .then(function (response) {
-            forceUpdate();
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
-        setOpenPopup(false);
-    }
-
+    const { title, openPopup, setOpenPopup, film, forceUpdate } = props;
+    const { movieId } = useParams();
     return (
         <Dialog open={openPopup}>
             <DialogTitle>{title}</DialogTitle>
-            <DialogContent><Form film={film} onSubmit={onSubmit} forceUpdate={forceUpdate}>{children}</Form></DialogContent>
+            <DialogContent><EditMovie movieId={movieId} movie={film} forceUpdate={forceUpdate} /></DialogContent>
             <DialogActions>
                 <button onClick={() => setOpenPopup(false)}>Huỷ</button>
             </DialogActions>
-            {/* <div className="popup">
-                <div className="flex justify-between items-center pb-3">
-                    <h1 className="text-2xl font-bold">{title}</h1>
-                    <button
-                        onClick={() => setOpenPopup(false)}
-                        className="text-2xl font-bold"
-                    >
-                        X
-                    </button>
-                </div>
-                <Form film={film}>{children}</Form>
-            </div> */}
         </Dialog>
     )
 }
