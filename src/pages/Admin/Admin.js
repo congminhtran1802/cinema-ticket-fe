@@ -8,6 +8,8 @@ import { dataHomeSlice } from "../../redux-toolkit/reducer/dataHomeSlice";
 import axios from "axios";
 import MovieIcon from '@mui/icons-material/Movie';
 import HomeIcon from '@mui/icons-material/Home';
+import TheatersIcon from '@mui/icons-material/Theaters';
+import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { Card, List, ListItem, ListItemPrefix } from "@material-tailwind/react";
 export default function Admin(props) {
@@ -32,6 +34,20 @@ export default function Admin(props) {
         <MovieIcon className="h-7 w-7 max-[1270px]:h-12 max-[1270px]:w-12" />
       ),
       link: "/admin/list",
+    },
+    {
+      title: "Quản lý rạp",
+      icon: (
+        <TheatersIcon className="h-7 w-7 max-[1270px]:h-12 max-[1270px]:w-12" />
+      ),
+      link: "/admin/branch/list",
+    },
+    {
+      title: "Quản lý phòng",
+      icon: (
+        <MeetingRoomIcon className="h-7 w-7 max-[1270px]:h-12 max-[1270px]:w-12" />
+      ),
+      link: "/admin/room/list",
     },
   ];
 

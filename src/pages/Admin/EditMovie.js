@@ -7,8 +7,10 @@ import LinearProgress from "@mui/material/LinearProgress";
 // import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 // import { storage } from "../../Services/firebaseService";
 import { Alert } from "../../components/Alert/Alert";
+import SchedulePopup from "../../components/Popup/SchedulePopup";
 
 export default function EditMovie() {
+    const [openPopup, setOpenPopup] = useState(false);
     const navigate = useNavigate();
     const { movieId } = useParams();
     const [isLoading, setIsLoading] = useState(false);
@@ -20,8 +22,16 @@ export default function EditMovie() {
     }
     , []);
 
+    useEffect(() => {
+        axios.get(`http://localhost:8080/api/schedule/movie?movieId=${movieId}`).then((response) => {
+            setScheduleData(response.data);
+        });
+    }
+    , []);
+
     // movie data body
     const [data, setData] = useState({});
+    const [scheduleData, setScheduleData] = useState();
 
     // input handle change
     const change = (e) => {
@@ -60,12 +70,17 @@ export default function EditMovie() {
     // data save success
     const [dataSave, setDataSave] = useState(null);
 
+
     // save property
     const saveProperty = async () => {
+        var dataFinal = {
+            movieDTO: data,
+            scheduleDTO: scheduleData
+        };
         try {
             const response = await axios.put(
                 `http://localhost:8080/api/admin/${movieId}`,
-                data
+                dataFinal
             );
 
             if (response.status === 200) {
@@ -289,6 +304,22 @@ export default function EditMovie() {
                             />
                         </div>
 
+                        {/* Schedule */}
+                        <div className="sm:col-span-1">
+                            <label
+                                htmlFor="numguest"
+                                className="block font-medium leading-6 text-gray-900"
+                            >
+                                Schedule
+                            </label>
+                            <p className="bg-white cursor-pointer mt-3 py-4 px-3 font-bold border-2" onClick={
+                                () => {
+                                    setOpenPopup(true);
+                                }
+                            }>Lịch chiếu (<span id="scheduleCount">{scheduleData?.length}</span>)</p>
+                            <SchedulePopup title="Lịch chiếu" openPopup={openPopup} setOpenPopup={setOpenPopup} listSchedule={scheduleData} setListSchedule={setScheduleData} />
+                        </div>
+
                         {/* duration */}
                         <div className="sm:col-span-1">
                             <label
@@ -387,7 +418,7 @@ export default function EditMovie() {
                     <hr />
                 </div>
 
-                <div className="flex items-center justify-end gap-x-4 text-[1.6em]">
+                <div className="flex items-center justify-end gap-x-4 text-[1em]">
                     <Link to="/admin/list">
                         <button
                             type="submit"

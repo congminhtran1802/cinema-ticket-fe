@@ -59,37 +59,37 @@ export default function ListMovie() {
                 <h1 className="text-center text-4xl">Quản lý phim</h1>
                 <Link to="/admin/add" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded ml-auto">Thêm phim</Link>
             </div>
-            <table class="w-full text-gray-700 table-hover">
+            <table className="w-full text-gray-700 table-hover">
                 <thead className="bg-gray-200">
                     <tr>
-                        <th scope="col" className="px-4 w-[150px]">
+                        <th scope="col" className="px-4 w-[150px] text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Phim
                         </th>
-                        <th scope="col" className="px-4 w-[80px]">
+                        <th scope="col" className="px-4 w-[80px] text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Đạo diễn
                         </th>
-                        <th scope="col" className="px-4 w-[300px]">
+                        <th scope="col" className="px-4 w-[300px] text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Diễn viên
                         </th>
-                        <th scope="col" className="px-4 w-[150px]">
+                        <th scope="col" className="px-4 w-[150px] text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Thể loại
                         </th>
-                        <th scope="col" className="px-4 w-[100px]">
+                        <th scope="col" className="px-4 w-[100px] text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Ngày khởi chiếu
                         </th>
-                        <th scope="col" className="px-4 w-[80px]">
+                        <th scope="col" className="px-4 w-[80px] text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Thời lượng
                         </th>
-                        <th scope="col" className="px-4 w-[100px]">
+                        <th scope="col" className="px-4 w-[100px] text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Ngôn ngữ
                         </th>
-                        <th scope="col" className="px-4 w-[100px]">
+                        <th scope="col" className="px-4 w-[100px] text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Rated
                         </th>
-                        <th scope="col" className="px-4 w-[60px]">
+                        <th scope="col" className="px-4 w-[60px] text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Trailer URL
                         </th>
-                        <th scope="col" className="px-4 w-[150px]">
+                        <th scope="col" className="px-4 w-[150px] text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Thao tác
                         </th>
                     </tr>

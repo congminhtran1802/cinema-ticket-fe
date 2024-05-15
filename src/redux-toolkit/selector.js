@@ -5,3 +5,4 @@ export const dataScheduleSelector = (state) => state.dataSchedule;
 export const dataSearchSelector = (state) => state.dataSearch;
 export const user = (state) => state.user;
 export const dataTicketSelector = (state) => state.dataTicket;
+export const dataRoomSelector = (state) => state.dataRoom;

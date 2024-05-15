@@ -42,9 +42,13 @@ export default function Footer(props) {
           <div className="flex flex-col self-center text-sm text-center md:block lg:col-start-1 md:space-x-6">
             <span>©2021 All rights reserved</span>
           </div>
-          <div className="">
-
-          </div>
+          <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+          <df-messenger
+            intent="WELCOME"
+            chat-title="eshop-spring"
+            agent-id="79b6647f-8242-4243-9d30-2888bb79a0c0"
+            language-code="vi"
+          ></df-messenger>
 
           {/* <div className="flex justify-center pt-4 space-x-4 lg:pt-0 lg:col-end-13">
                     <a href="#" className="flex items-center justify-center w-10 h-10 rounded-full bg-violet-600 text-coolGray-50">

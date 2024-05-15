@@ -7,10 +7,14 @@ import LinearProgress from "@mui/material/LinearProgress";
 // import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 // import { storage } from "../../Services/firebaseService";
 import { Alert } from "../../components/Alert/Alert";
-
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import SchedulePopup from "../../components/Popup/SchedulePopup";
 export default function AddMovie() {
     const navigate = useNavigate();
-
+    const [openPopup, setOpenPopup] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
     // movie data body
@@ -30,6 +34,14 @@ export default function AddMovie() {
         rated: "",
         isShowing: 0,
     });
+
+    // list schedule
+    const [listSchedule, setListSchedule] = useState([]);
+
+    
+
+
+
 
     // input handle change
     const change = (e) => {
@@ -68,12 +80,18 @@ export default function AddMovie() {
     // data save success
     const [dataSave, setDataSave] = useState(null);
 
+    
+
     // save property
     const saveProperty = async () => {
         try {
+            const dataFinal = {
+                movieDTO: data,
+                scheduleDTO: listSchedule,
+            };
             const response = await axios.post(
                 `http://localhost:8080/api/admin`,
-                data
+                dataFinal
             );
 
             if (response.status === 200) {
@@ -135,11 +153,11 @@ export default function AddMovie() {
                     {/* row 1 */}
                     <div className="mt-8 mb-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                         {/* movie name */}
-                        <div className="sm:col-span-3">
+                        <div className="sm:col-span-4">
                             <label
                                 htmlFor="username"
                                 className="block font-medium leading-6 text-gray-900"
-                            >
+                            >   
                                 Tên phim
                             </label>
                             <input
@@ -153,7 +171,7 @@ export default function AddMovie() {
                         </div>
 
                         {/* director */}
-                        <div className="sm:col-span-3">
+                        <div className="sm:col-span-4">
                             <label
                                 htmlFor="numguest"
                                 className="block font-medium leading-6 text-gray-900"
@@ -294,6 +312,22 @@ export default function AddMovie() {
                             />
                         </div>
 
+                        {/* Schedule */}
+                        <div className="sm:col-span-1">
+                            <label
+                                htmlFor="numguest"
+                                className="block font-medium leading-6 text-gray-900"
+                            >
+                                Schedule
+                            </label>
+                            <p className="bg-white cursor-pointer mt-3 py-4 px-3 font-bold border-2" onClick={
+                                () => {
+                                    setOpenPopup(true);
+                                }
+                            }>Lịch chiếu (<span id="scheduleCount">{listSchedule.length}</span>)</p>
+                            <SchedulePopup title="Lịch chiếu" openPopup={openPopup} setOpenPopup={setOpenPopup} listSchedule={listSchedule} setListSchedule={setListSchedule} />
+                        </div>
+
                         {/* duration */}
                         <div className="sm:col-span-1">
                             <label
@@ -392,7 +426,7 @@ export default function AddMovie() {
                     <hr />
                 </div>
 
-                <div className="flex items-center justify-end gap-x-4 text-[1.6em]">
+                <div className="flex items-center justify-end gap-x-4 text-[1em]">
                     <Link to="/admin/list">
                         <button
                             type="submit"
