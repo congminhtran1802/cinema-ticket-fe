@@ -4,95 +4,156 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
-// import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-// import { storage } from "../../Services/firebaseService";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "../../util/firebaseconfig";
 import { Alert } from "../../components/Alert/Alert";
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import SchedulePopup from "../../components/Popup/SchedulePopup";
+import { useFormik } from "formik";
+import * as yup from "yup";
+
 export default function AddMovie() {
     const navigate = useNavigate();
     const [openPopup, setOpenPopup] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-
-    // movie data body
-    const [data, setData] = useState({
-        name: "",
-        smallImageURl: "",
-        shortDescription: "",
-        longDescription: "",
-        largeImageURL: "",
-        director: "",
-        actors: "",
-        categories: "",
-        releaseDate: "",
-        duration: 0,
-        trailerURL: "",
-        language: "",
-        rated: "",
-        isShowing: 0,
-    });
-
-    // list schedule
     const [listSchedule, setListSchedule] = useState([]);
-
-    
-
-
-
-
-    // input handle change
-    const change = (e) => {
-        const { name } = e.target;
-        let value = e.target.value;
-        
-        if (name === "duration" || name === "isShowing") {
-            value = parseInt(value);
-        }
-        setData({
-            ...data,
-            [name]: value,
-        });
-    };
-    
-
-    //   // Images upload
-    //   const uploadMultipleFiles = async (images) => {
-    //     const storageRef = ref(storage); // Thay 'storage' bằng đường dẫn đến thư mục bạn muốn lưu trữ ảnh
-
-    //     try {
-    //       const uploadPromises = images.map(async (file) => {
-    //         const imageRef = ref(storageRef, `images/${file.name}`);
-    //         await uploadBytes(imageRef, file);
-    //         const downloadUrl = await getDownloadURL(imageRef);
-    //         return downloadUrl;
-    //       });
-
-    //       const downloadUrls = await Promise.all(uploadPromises);
-    //       return downloadUrls;
-    //     } catch (error) {
-    //       console.error("Error: ", error);
-    //     }
-    //   };
-
-    // data save success
+    const [image, setImage] = useState();
+    const [banner, setBanner] = useState();
     const [dataSave, setDataSave] = useState(null);
 
-    
+    const formik = useFormik({
+        initialValues: {
+            name: "",
+            director: "",
+            actors: "",
+            smallImageURl: "",
+            largeImageURL: "",
+            shortDescription: "",
+            categories: "",
+            releaseDate: "",
+            duration: 0,
+            trailerURL: "",
+            language: "",
+            rated: "",
+            isShowing: 0,
+        },
+        validationSchema: yup.object({
+            name: yup.string().required('Tên phim là bắt buộc'),
+            smallImageURl: yup.mixed().required('Poster phim là bắt buộc'),
+            largeImageURL: yup.mixed().required('Ảnh bìa là bắt buộc'),
+            shortDescription: yup.string().required('Mô tả ngắn là bắt buộc'),
+            categories: yup.string().required('Thể loại là bắt buộc'),
+            releaseDate: yup.date().required('Ngày khởi chiếu là bắt buộc'),
+            duration: yup.number().required('Thời lượng là bắt buộc'),
+            trailerURL: yup.string().url('URL không hợp lệ').required('Trailer URL là bắt buộc'),
+            language: yup.string().required('Ngôn ngữ là bắt buộc'),
+            rated: yup.string().required('Rated là bắt buộc'),
+            isShowing: yup.number().required('Trạng thái đang chiếu là bắt buộc'),
+            director: yup.string().required('Đạo diễn là bắt buộc'),
+            actors: yup.string().required('Diễn viên là bắt buộc'),
+        }),
+        onSubmit: async (values) => {
+            setIsLoading(true);
+
+            try {
+                const avatar = await uploadSingleFile(image);
+                const bannerUrl = await uploadSingleFile(banner);
+                await saveProperty(avatar, bannerUrl);
+            } catch (error) {
+                console.log("error");
+            } finally {
+                setIsLoading(false);
+            }
+        },
+    });
+
+    const disableTime = () => {
+        var today, dd, mm, yyyy;
+        today = new Date();
+        dd = today.getDate();
+        mm = today.getMonth() + 1; //January is 0!
+        yyyy = today.getFullYear();
+        if (dd < 10) {
+            dd = '0' + dd
+        }
+
+        if (mm < 10) {
+            mm = '0' + mm
+        }
+        return `${yyyy}-${mm}-${dd}`;
+    }
+
+    // // movie data body
+    // const [data, setData] = useState({
+    //     name: "",
+    //     smallImageURl: "",
+    //     shortDescription: "",
+    //     longDescription: "",
+    //     largeImageURL: "",
+    //     director: "",
+    //     actors: "",
+    //     categories: "",
+    //     releaseDate: "",
+    //     duration: 0,
+    //     trailerURL: "",
+    //     language: "",
+    //     rated: "",
+    //     isShowing: 0,
+    // });
+
+
+    // // input handle change
+    // const change = (e) => {
+    //     const { name } = e.target;
+    //     let value = e.target.value;
+
+    //     if (name === "duration" || name === "isShowing") {
+    //         value = parseInt(value);
+    //     }
+    //     setData({
+    //         ...data,
+    //         [name]: value,
+    //     });
+    // };
+
+
+    // Images upload
+    const uploadSingleFile = async (file) => {
+        const storageRef = ref(storage);
+
+        try {
+            const imageRef = ref(storageRef, `images/${file.name}`);
+
+            await uploadBytes(imageRef, file);
+
+            const downloadUrl = await getDownloadURL(imageRef);
+
+            return downloadUrl;
+        } catch (error) {
+            console.error("Error: ", error);
+        }
+    };
+
+
+
+
+
 
     // save property
-    const saveProperty = async () => {
+    const saveProperty = async (avatar, bannerUrl) => {
         try {
             const dataFinal = {
-                movieDTO: data,
+                movieDTO: {
+                    ...formik.values,
+                    smallImageURl: avatar,
+                    largeImageURL: bannerUrl,
+                },
                 scheduleDTO: listSchedule,
             };
-            const response = await axios.post(
-                `http://localhost:8080/api/admin`,
-                dataFinal
-            );
+            const response = await axios.post(`http://localhost:8080/api/admin`, dataFinal);
 
             if (response.status === 200) {
                 setDataSave(response.data);
@@ -103,20 +164,22 @@ export default function AddMovie() {
     };
     // end save property
 
-    // submit
-    const uploadAndSave = async (e) => {
-        e.preventDefault();
+    // // submit
+    // const uploadAndSave = async (e) => {
+    //     e.preventDefault();
 
-        setIsLoading(true);
+    //     setIsLoading(true);
 
-        try {
-            await saveProperty();
-        } catch (error) {
-            console.log("error");
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    //     try {
+    //         const avatar = await uploadSingleFile(image);
+    //         const bannerUrl = await uploadSingleFile(banner);
+    //         await saveProperty(avatar, bannerUrl);
+    //     } catch (error) {
+    //         console.log("error");
+    //     } finally {
+    //         setIsLoading(false);
+    //     }
+    // };
 
     useEffect(() => {
         if (dataSave) {
@@ -144,7 +207,7 @@ export default function AddMovie() {
 
     return (
         <div className="mx-4 mt-3 mb-4">
-            <form onSubmit={uploadAndSave}>
+            <form onSubmit={formik.handleSubmit}>
                 <div>
                     <div className="font-medium mt-8 flex items-center text-gray-900 text-[2rem]">
                         <span>TẠO PHIM MỚI</span>
@@ -157,36 +220,39 @@ export default function AddMovie() {
                             <label
                                 htmlFor="username"
                                 className="block font-medium leading-6 text-gray-900"
-                            >   
+                            >
                                 Tên phim
                             </label>
                             <input
-                                onChange={change}
+                                value={formik.values.name}
+                                onChange={formik.handleChange}
                                 required
                                 type="text"
                                 name="name"
                                 id="name"
                                 className="block h-16 mt-3 w-full rounded-md border-0 py-1.5 pl-5 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-black sm:leading-6"
                             />
+                            {formik.touched.name && formik.errors.name ? (
+                                <div className="text-red-600">{formik.errors.name}</div>
+                            ) : null}
                         </div>
 
                         {/* director */}
                         <div className="sm:col-span-4">
-                            <label
-                                htmlFor="numguest"
-                                className="block font-medium leading-6 text-gray-900"
-                            >
+                            <label htmlFor="director" className="block font-medium leading-6 text-gray-900">
                                 Đạo diễn
                             </label>
                             <input
-                                defaultValue={""}
-                                required
-                                onChange={change}
+                                onChange={formik.handleChange}
+                                value={formik.values.director}
                                 type="text"
                                 name="director"
                                 id="director"
                                 className="block h-16 mt-3 w-full rounded-md border-0 py-1.5 pl-5 pr-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-black sm:leading-6"
                             />
+                            {formik.touched.director && formik.errors.director ? (
+                                <div className="text-red-600">{formik.errors.director}</div>
+                            ) : null}
                         </div>
 
                         {/* actors */}
@@ -198,55 +264,76 @@ export default function AddMovie() {
                                 Diễn viên
                             </label>
                             <input
-                                defaultValue={""}
+                                value={formik.values.actors}
                                 required
-                                onChange={change}
+                                onChange={formik.handleChange}
                                 type="text"
                                 name="actors"
                                 id="actors"
                                 className="block h-16 mt-3 w-full rounded-md border-0 py-1.5 pl-5 pr-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-black sm:leading-6"
                             />
+                            {formik.touched.actors && formik.errors.actors ? (
+                                <div className="text-red-600">{formik.errors.actors}</div>
+                            ) : null}
                         </div>
 
 
                         {/* small url */}
                         <div className="col-span-3">
+
                             <label
-                                htmlFor="street-address"
+                                htmlFor="numguest"
                                 className="block font-medium leading-6 text-gray-900"
                             >
                                 Ảnh đại diện
                             </label>
-                            <div className="mt-2">
+                            <div className="bg-white">
+
                                 <input
                                     required
-                                    onChange={change}
-                                    type="text"
-                                    name="smallImageURl"
-                                    id="smallImageURl"
-                                    className="block h-16 mt-3 w-full rounded-md border-0 py-1.5 pl-5 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-black sm:leading-6"
+                                    onChange={(e) => {
+                                        setImage(e.target.files[0]);
+                                        formik.setFieldValue("smallImageURl", e.target.files[0]);
+                                    }}
+                                    type="file"
+                                    name="image"
+                                    id="image"
+                                    className="block h-16 mt-3 w-full rounded-md border-0 pt-4 pl-5 pr-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-black sm:leading-6"
                                 />
                             </div>
+                            {formik.touched.smallImageURl && formik.errors.smallImageURl ? (
+                                <div className="text-red-600">{formik.errors.smallImageURl}</div>
+                            ) : null}
+
                         </div>
 
                         {/* image cover url */}
                         <div className="col-span-3">
+
                             <label
-                                htmlFor="street-address"
+                                htmlFor="numguest"
                                 className="block font-medium leading-6 text-gray-900"
                             >
                                 Ảnh bìa
                             </label>
-                            <div className="mt-2">
+                            <div className="bg-white">
+
                                 <input
                                     required
-                                    onChange={change}
-                                    type="text"
-                                    name="largeImageURL"
-                                    id="largeImageURL"
-                                    className="block h-16 mt-3 w-full rounded-md border-0 py-1.5 pl-5 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-black sm:leading-6"
+                                    onChange={(e) => {
+                                        setBanner(e.target.files[0]);
+                                        formik.setFieldValue("largeImageURL", e.target.files[0]);
+                                    }}
+                                    type="file"
+                                    name="banner"
+                                    id="banner"
+                                    className="block h-16 mt-3 w-full rounded-md border-0 pt-4 pl-5 pr-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-black sm:leading-6"
                                 />
                             </div>
+                            {formik.touched.largeImageURL && formik.errors.largeImageURL ? (
+                                <div className="text-red-600">{formik.errors.largeImageURL}</div>
+                            ) : null}
+
                         </div>
 
                         {/* description */}
@@ -259,20 +346,24 @@ export default function AddMovie() {
                             </label>
                             <div className="mt-2">
                                 <textarea
+                                    value={formik.values.shortDescription}
                                     required
-                                    onChange={change}
+                                    onChange={formik.handleChange}
                                     id="shortDescription"
                                     name="shortDescription"
                                     rows={3}
                                     className="block pl-5 w-full rounded-md border-0 py-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-black  sm:leading-6"
-                                    defaultValue={""}
+
                                 />
+                                {formik.touched.shortDescription && formik.errors.shortDescription ? (
+                                    <div className="text-red-600">{formik.errors.shortDescription}</div>
+                                ) : null}
                             </div>
                         </div>
 
 
 
-                        
+
 
                         {/* categories */}
                         <div className="sm:col-span-1">
@@ -283,14 +374,17 @@ export default function AddMovie() {
                                 Thể loại
                             </label>
                             <input
-                                defaultValue={""}
+                                value={formik.values.categories}
                                 required
-                                onChange={change}
+                                onChange={formik.handleChange}
                                 type="text"
                                 name="categories"
                                 id="categories"
                                 className="block h-16 mt-3 w-full rounded-md border-0 py-1.5 pl-5 pr-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-black sm:leading-6"
                             />
+                            {formik.touched.categories && formik.errors.categories ? (
+                                <div className="text-red-600">{formik.errors.categories}</div>
+                            ) : null}
                         </div>
 
                         {/* release date */}
@@ -302,14 +396,18 @@ export default function AddMovie() {
                                 Ngày khởi chiếu
                             </label>
                             <input
-                                defaultValue={""}
+                                value={formik.values.releaseDate}
                                 required
-                                onChange={change}
+                                onChange={formik.handleChange}
+                                min={disableTime()}
                                 type="date"
                                 name="releaseDate"
                                 id="releaseDate"
                                 className="block h-16 mt-3 w-full rounded-md border-0 py-1.5 pl-5 pr-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-black sm:leading-6"
                             />
+                            {formik.touched.releaseDate && formik.errors.releaseDate ? (
+                                <div className="text-red-600">{formik.errors.releaseDate}</div>
+                            ) : null}
                         </div>
 
                         {/* Schedule */}
@@ -337,14 +435,16 @@ export default function AddMovie() {
                                 Thời lượng
                             </label>
                             <input
-                                min={0}
-                                required
-                                onChange={change}
+                                value={formik.values.duration}
+                                onChange={formik.handleChange}
                                 type="number"
                                 name="duration"
                                 id="duration"
                                 className="block h-16 mt-3 w-full rounded-md border-0 py-1.5 pl-5 pr-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-black sm:leading-6"
                             />
+                            {formik.touched.duration && formik.errors.duration ? (
+                                <div className="text-red-600">{formik.errors.duration}</div>
+                            ) : null}
                         </div>
 
                         {/* trailer url */}
@@ -356,14 +456,16 @@ export default function AddMovie() {
                                 Trailer URL
                             </label>
                             <input
-                                defaultValue={""}
-                                required
-                                onChange={change}
+                                value={formik.values.trailerURL}
+                                onChange={formik.handleChange}
                                 type="text"
                                 name="trailerURL"
                                 id="trailerURL"
                                 className="block h-16 mt-3 w-full rounded-md border-0 py-1.5 pl-5 pr-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-black sm:leading-6"
                             />
+                            {formik.touched.trailerURL && formik.errors.trailerURL ? (
+                                <div className="text-red-600">{formik.errors.trailerURL}</div>
+                            ) : null}
                         </div>
 
                         {/* language */}
@@ -375,14 +477,16 @@ export default function AddMovie() {
                                 Ngôn ngữ
                             </label>
                             <input
-                                defaultValue={""}
-                                required
-                                onChange={change}
+                                value={formik.values.language}
+                                onChange={formik.handleChange}
                                 type="text"
                                 name="language"
                                 id="language"
                                 className="block h-16 mt-3 w-full rounded-md border-0 py-1.5 pl-5 pr-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-black sm:leading-6"
                             />
+                            {formik.touched.language && formik.errors.language ? (
+                                <div className="text-red-600">{formik.errors.language}</div>
+                            ) : null}
                         </div>
 
                         {/* rated */}
@@ -394,14 +498,16 @@ export default function AddMovie() {
                                 Rated
                             </label>
                             <input
-                                defaultValue={""}
-                                required
-                                onChange={change}
+                                value={formik.values.rated}
+                                onChange={formik.handleChange}
                                 type="text"
                                 name="rated"
                                 id="rated"
                                 className="block h-16 mt-3 w-full rounded-md border-0 py-1.5 pl-5 pr-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-black sm:leading-6"
                             />
+                            {formik.touched.rated && formik.errors.rated ? (
+                                <div className="text-red-600">{formik.errors.rated}</div>
+                            ) : null}
                         </div>
 
                         {/* is showing */}
@@ -413,15 +519,18 @@ export default function AddMovie() {
                                 Đang chiếu
                             </label>
                             <input
-                                min={0}
-                                required
-                                onChange={change}
+                                value={formik.values.isShowing}
+                                onChange={formik.handleChange}
                                 type="number"
                                 name="isShowing"
                                 id="isShowing"
                                 className="block h-16 mt-3 w-full rounded-md border-0 py-1.5 pl-5 pr-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-black sm:leading-6"
                             />
+                            {formik.touched.isShowing && formik.errors.isShowing ? (
+                                <div className="text-red-600">{formik.errors.isShowing}</div>
+                            ) : null}
                         </div>
+
                     </div>
                     <hr />
                 </div>
@@ -436,7 +545,7 @@ export default function AddMovie() {
                         </button>
                     </Link>
                     <button
-                        onClick={uploadAndSave}
+                        onClick={formik.handleSubmit}
                         type="submit"
                         className=" bg-indigo-600 text-white rounded-lg px-3 py-2 font-semibold border ring-2 shadow-md hover:bg-indigo-500 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 my-3"
                     >

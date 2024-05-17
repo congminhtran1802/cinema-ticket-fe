@@ -12,10 +12,13 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
+import Film_Flip from "../../components/Film/Film_Flip";
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 
 export default function Home(props) {
   const [category, setCategory] = React.useState("");
+  const [moviePredict, setMoviePredict] = React.useState();
   useEffect(() => {
     dispatch(dataHomeSlice.actions.getDataHomeRequest());
     axios
@@ -39,6 +42,68 @@ export default function Home(props) {
       });
   }, [category]);
 
+  const [categoryPredict, setCategoryPredict] = React.useState();
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:5000/predict?age=18&gender=0`)
+      .then(function (response) {
+        setCategoryPredict(response.data.prediction[0]);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, []);
+
+  const mapToMovieTypes = numbers => {
+    return numbers?.map(number => {
+        switch (number) {
+            case 0:
+                return "Hoạt hình";
+            case 1:
+                return "Hành động";
+            case 2:
+                return "Lãng mạn";
+            case 3:
+                return "Kinh dị";
+            case 4:
+                return "Trinh thám";
+            case 5:
+                return "Viễn tưởng";
+            case 6:
+                return "Hài hước";
+            case 7:
+                return "Lịch sử";
+            case 8:
+                return "Khoa học";
+            default:
+                return "Không xác định";
+        }
+    });
+  }
+
+  useEffect(() => {
+    const movieCategories = mapToMovieTypes(categoryPredict);
+    axios
+      .get(`http://localhost:8080/api/movies/byCategory`, {
+            params: {
+                categories: movieCategories?.join(',') // Chuyển mảng thành một chuỗi, phân cách bằng dấu phẩy
+            }
+        })
+      .then(function (response) {
+        console.log("response", response.data);
+        setMoviePredict(response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, [categoryPredict]);
+
+
+  console.log("moviePredict", moviePredict);
+
+
+
   const { dataHome, isLoading } = useSelector(dataHomeSelector);
   const dispatch = useDispatch();
 
@@ -49,6 +114,19 @@ export default function Home(props) {
   return (
     <div className="container mx-auto">
       <HomeCarousel/>
+      <div className="text-left text-2xl font-bold mt-5"><ChevronRightIcon></ChevronRightIcon>Đề xuất phim</div>
+      <section className="text-gray-600 body-font">
+        <div className="grid grid-cols-4 pb-10 pl-5">
+          {moviePredict?.map((item, index) => {
+            return (
+              <div className="mt-2 " key={index}>
+                <Film_Flip phim={item} />
+              </div>
+            );
+          })}
+        </div>
+      </section>
+      
       <div className="mt-5">
         <FormControl sx={{ m: 1, minWidth: 120 }}>
         <InputLabel id="demo-simple-select-autowidth-label">Thể loại</InputLabel>

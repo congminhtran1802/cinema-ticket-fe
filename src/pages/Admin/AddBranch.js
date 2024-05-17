@@ -4,12 +4,13 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
-// import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-// import { storage } from "../../Services/firebaseService";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "../../util/firebaseconfig";
 import { Alert } from "../../components/Alert/Alert";
 export default function AddBranch() {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
+    const [image, setImage] = useState();
 
     // branch data body
     const [data, setData] = useState({
@@ -28,35 +29,40 @@ export default function AddBranch() {
             [name]: value,
         });
     };
-    
+
 
     //   // Images upload
-    //   const uploadMultipleFiles = async (images) => {
-    //     const storageRef = ref(storage); // Thay 'storage' bằng đường dẫn đến thư mục bạn muốn lưu trữ ảnh
+    const uploadSingleFile = async (file) => {
+        // Thay 'storage' bằng đường dẫn đến thư mục bạn muốn lưu trữ ảnh
+        const storageRef = ref(storage);
 
-    //     try {
-    //       const uploadPromises = images.map(async (file) => {
-    //         const imageRef = ref(storageRef, `images/${file.name}`);
-    //         await uploadBytes(imageRef, file);
-    //         const downloadUrl = await getDownloadURL(imageRef);
-    //         return downloadUrl;
-    //       });
+        try {
+            // Tạo một tham chiếu đến vị trí lưu trữ cụ thể cho tệp ảnh
+            const imageRef = ref(storageRef, `images/${file.name}`);
 
-    //       const downloadUrls = await Promise.all(uploadPromises);
-    //       return downloadUrls;
-    //     } catch (error) {
-    //       console.error("Error: ", error);
-    //     }
-    //   };
+            // Tải tệp ảnh lên vị trí lưu trữ cụ thể
+            await uploadBytes(imageRef, file);
+
+            // Lấy URL tải xuống của ảnh sau khi đã được tải lên
+            const downloadUrl = await getDownloadURL(imageRef);
+
+            // Trả về URL tải xuống của ảnh
+            return downloadUrl;
+        } catch (error) {
+            // In ra lỗi nếu có bất kỳ lỗi nào xảy ra trong quá trình tải lên
+            console.error("Error: ", error);
+        }
+    };
 
     // data save success
     const [dataSave, setDataSave] = useState(null);
 
-    
+
 
     // save property
-    const saveBranch = async () => {
+    const saveBranch = async (avatar) => {
         try {
+            data.imgURL = avatar;
             const response = await axios.post(
                 `http://localhost:8080/api/branches`,
                 data
@@ -78,7 +84,8 @@ export default function AddBranch() {
         setIsLoading(true);
 
         try {
-            await saveBranch();
+            const avatar = await uploadSingleFile(image);
+            await saveBranch(avatar);
         } catch (error) {
             console.log("error");
         } finally {
@@ -180,19 +187,22 @@ export default function AddBranch() {
                         {/* img url */}
                         <div className="col-span-full">
                             <label
-                                htmlFor="street-address"
+                                htmlFor="numguest"
                                 className="block font-medium leading-6 text-gray-900"
                             >
                                 Ảnh rạp
                             </label>
-                            <div className="mt-2">
+                            <div className="bg-white">
+
                                 <input
                                     required
-                                    onChange={change}
-                                    type="text"
-                                    name="imgURL"
-                                    id="imgURL"
-                                    className="block h-16 mt-3 w-full rounded-md border-0 py-1.5 pl-5 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-black sm:leading-6"
+                                    onChange={(e) => {
+                                        setImage(e.target.files[0]);
+                                    }}
+                                    type="file"
+                                    name="image"
+                                    id="image"
+                                    className="block h-16 mt-3 w-full rounded-md border-0 pt-4 pl-5 pr-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-black sm:leading-6"
                                 />
                             </div>
                         </div>

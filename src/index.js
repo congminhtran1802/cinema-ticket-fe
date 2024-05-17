@@ -10,6 +10,11 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { RecoilRoot } from "recoil";
 import i18nConfig from "./i18n";
+import Kommunicate from "@kommunicate/kommunicate-chatbot-plugin";
+Kommunicate.init("2a9518232a7edc2861dab98b27815ea25", {
+  automaticChatOpenOnNavigation: true,
+  popupWidget: true
+});
 i18nConfig()
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
