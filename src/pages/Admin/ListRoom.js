@@ -38,7 +38,7 @@ export default function ListRoom() {
         try {
           await DeleteAlert(async () => {
             const res = await axios.delete(
-              `http://localhost:8080/api/branches/${roomId}`
+              `http://localhost:8080/api/rooms/${roomId}`
             );
             if (res.status === 200) {
               fetchData();

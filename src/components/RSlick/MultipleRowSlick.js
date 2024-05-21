@@ -29,7 +29,6 @@ function SamplePrevArrow(props) {
 
 
 const MultipleRows = (props) => {
-  console.log("props.arrFilm:", props.dataHome);
   const [dangChieu, setDangChieu] = useState(true);
   const [dataFilm, setDataFilm] = useState(props.dataHome);
 
@@ -61,7 +60,6 @@ const MultipleRows = (props) => {
 
   let activeClassSC = dangChieu === false ? "active_Film" : "none_active_Film";
 
-  console.log("activeSC", activeClassSC);
   const settings = {
     className: "center variable-width",
     centerMode: true,

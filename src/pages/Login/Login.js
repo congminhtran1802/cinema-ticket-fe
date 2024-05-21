@@ -17,7 +17,6 @@ export default function Login(props) {
   const [email, setEmail] = useState("");
   const [password1, setPassword] = useState("");
   const currentUser = useSelector((state) => state.user.currentUser);
-  console.log(currentUser)
   const isUser =   localStorage.getItem("accessToken")
   const navigate = useNavigate();
   const [, setToken] = useRecoilState(tokenState);
@@ -27,11 +26,9 @@ export default function Login(props) {
       navigate("/")
     }
   })
-  console.log(userL)
   useEffect(() => {
 
     if (currentUser !== null) {
-      console.log(currentUser);
       setUserLogin(currentUser)
       setToken(currentUser.accessToken);
       localStorage.setItem("accessToken", currentUser.accessToken);
@@ -47,13 +44,11 @@ export default function Login(props) {
   }, [currentUser]);
    const handleLogin = async () => {
 
-    console.log(email, password1);
     try {
       const data = {
         username: email,
         password: password1,
       };
-      console.log(data)
       login(dispatch, data);
   
       // const res = await publicAxios.post(API.LOGIN, data);

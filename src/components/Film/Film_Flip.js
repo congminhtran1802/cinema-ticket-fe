@@ -61,7 +61,7 @@ export default function Film_Flip(props) {
                     </div>
                 </div>
             </div>
-            <div onClick={handleReload} className="bg-orange-300 text-center cursor-pointer py-2 bg-indigo-300 my-2 text-success-50 font-bold">
+            <div onClick={handleReload} className="bg-orange-300 text-center cursor-pointer py-2 my-2 text-success-50 font-bold">
                 ĐẶT VÉ
             </div>
             {/* <div className="relative bg-black h-10" style={{ width: 260,}}>

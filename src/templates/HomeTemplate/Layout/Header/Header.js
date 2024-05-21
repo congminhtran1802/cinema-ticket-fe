@@ -12,6 +12,9 @@ export default function Header() {
 	const [role, setRole] = useState(null)
 
 	useEffect(() => {
+		if (user === null) {
+			return
+		}
 		axios.get(`http://localhost:8080/api/role?userId=${user.id}`)
 			.then(res => {
 				setRole(res.data)
@@ -36,6 +39,7 @@ export default function Header() {
 	};
 	const handleLogout = () => {
 		localStorage.removeItem("accessToken");
+		localStorage.removeItem("USER_LOGIN");
 		navigate('/login')
 	};
 
@@ -93,12 +97,12 @@ export default function Header() {
 					<li className="flex">
 						<Link rel="noopener noreferrer" to="/" className="flex items-center px-4 -mb-0.5  dark:border-transparent dark:text-violet-400 dark:border-violet-400 text-white" activeclassname="border-b-2 border-white">{t('home')}</Link>
 					</li>
-					<li className="flex">
+					{/* <li className="flex">
 						<Link rel="noopener noreferrer" to="/contact" className="flex items-center px-4 -mb-0.5  dark:border-transparent text-white" activeclassname="border-b-2 border-white">{t('contact')}</Link>
 					</li>
 					<li className="flex">
 						<Link rel="noopener noreferrer" to="/news" className="flex items-center px-4 -mb-0.5  dark:border-transparent text-white" activeclassname="border-b-2 border-white">{t('news')}</Link>
-					</li>
+					</li> */}
 				</ul>
 				{
 					isUser === null ? <div className="items-center flex-shrink-0 hidden lg:flex  w-[40%] justify-end">

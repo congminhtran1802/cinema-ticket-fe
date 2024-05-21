@@ -1,4 +1,5 @@
 import DialogTitle from '@mui/material/DialogTitle';
+import { Link, useNavigate } from "react-router-dom";
 import Dialog from '@mui/material/Dialog';
 import React from "react";
 import { useState, useEffect } from "react";
@@ -12,8 +13,9 @@ export default function BookingPopup(props) {
     const { title, lichchieu, openPopup, setOpenPopup } = props;
     const [seatList, setSeatList] = useState([]);
     const [selectedSeat, setSelectedSeat] = useState([]);
+    const user = JSON.parse(localStorage.getItem("USER_LOGIN"));
     const bookingData = {
-        userId: 1,
+        userId: user.id,
         listSeatIds: [],
         scheduleId: null,
     };
@@ -36,7 +38,6 @@ export default function BookingPopup(props) {
     };
 
     const handleSelectSeat = (seatId) => {
-        console.log(seatId);
         const index = selectedSeat.includes(seatId);
         if (!index) {
             setSelectedSeat([...selectedSeat, seatId]);
@@ -46,11 +47,21 @@ export default function BookingPopup(props) {
     }
 
     const handleBooking = () => {
+
+        if(user == null) {
+            Alert(1500, "Đặt vé", "Vui lòng đăng nhập", "warning", "OK");
+            return;
+        }
+
+        if (selectedSeat.length == 0) {
+            Alert(1500, "Đặt vé", "Vui lòng chọn ghế", "warning", "OK");
+            return;
+        }
+
         bookingData.listSeatIds = selectedSeat;
         bookingData.scheduleId = lichchieu.id;
         axios.post(`http://localhost:8080/api/bills/create-new-bill`, bookingData)
         .then(function (response) {
-          console.log("response: ", response);
           setOpenPopup(false);
           bookingData.listSeatIds = [];
           bookingData.scheduleId = null;
@@ -63,7 +74,7 @@ export default function BookingPopup(props) {
     };
 
     return (
-        <Dialog open={openPopup} maxWidth="lg" fullWidth="true">
+        <Dialog open={openPopup} maxWidth="lg" fullWidth="true" id='modal-center'>
             <div className="flex justify-between pl-2 pr-4 border-b-2 border-black/30 box-border">
                 <DialogTitle><h1 className="text-2xl font-bold">{title}</h1></DialogTitle>
                 <DialogActions>

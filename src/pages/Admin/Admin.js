@@ -20,6 +20,23 @@ export default function Admin(props) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const user = JSON.parse(localStorage.getItem("USER_LOGIN"))
+	const [role, setRole] = useState(null)
+
+	useEffect(() => {
+		axios.get(`http://localhost:8080/api/role?userId=${user.id}`)
+			.then(res => {
+				setRole(res.data)
+			})
+			.catch(err => {
+				console.log(err)
+			})
+	}, [])
+
+  
+  
+
+
   const sideBar = [
     {
       title: "Trang chủ",

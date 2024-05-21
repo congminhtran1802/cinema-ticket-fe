@@ -4,14 +4,19 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
-// import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-// import { storage } from "../../Services/firebaseService";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "../../util/firebaseconfig";
 import { Alert } from "../../components/Alert/Alert";
+import { useFormik } from "formik";
+import * as yup from "yup";
 
 export default function EditBranch() {
     const navigate = useNavigate();
     const { branchId } = useParams();
     const [isLoading, setIsLoading] = useState(false);
+    const [data, setData] = useState({});
+    const [dataSave, setDataSave] = useState(null);
+    const [image, setImage] = useState();
     
     useEffect(() => {
         axios.get(`http://localhost:8080/api/branches/detail?branchId=${branchId}`).then((response) => {
@@ -20,45 +25,58 @@ export default function EditBranch() {
     }
     , []);
 
-    // movie data body
-    const [data, setData] = useState({});
+    const formik = useFormik({
+        initialValues: {
+            name: "",
+            imgURL: "",
+            diaChi: "",
+            phoneNo: "",
+        },
+        validationSchema: yup.object({
+            name: yup.string().required("Tên rạp không được để trống"),
+            imgURL: yup.mixed().required('Ảnh rạp là bắt buộc'),
+            phoneNo: yup.string().required("Số điện thoại không được để trống"),
+            diaChi: yup.string().required("Địa chỉ không được để trống"),
+        }),
+        onSubmit: async (values) => {
+            setIsLoading(true);
+            try {
+                if (image) {
+                    const avatar = await uploadSingleFile(image);
+                    await saveBranch({ ...values, imgURL: avatar });
+                } else {
+                    await saveBranch(values);
+                }
+            } catch (error) {
+                console.log("error");
+            }
+            setIsLoading(false);
+        },
+    });
 
-    // input handle change
-    const change = (e) => {
-        const { name } = e.target;
-        let value = e.target.value;
-        setData({
-            ...data,
-            [name]: value,
-        });
+    useEffect(() => {
+        if (data) {
+            formik.setValues(data);
+        }
+    }, [data]);
+
+    // Images upload
+    const uploadSingleFile = async (file) => {
+        const storageRef = ref(storage);
+
+        try {
+            const imageRef = ref(storageRef, `images/${file.name}`);
+            await uploadBytes(imageRef, file);
+            const downloadUrl = await getDownloadURL(imageRef);
+            return downloadUrl;
+        } catch (error) {
+            console.error("Error: ", error);
+        }
     };
     
 
-    //   // Images upload
-    //   const uploadMultipleFiles = async (images) => {
-    //     const storageRef = ref(storage); // Thay 'storage' bằng đường dẫn đến thư mục bạn muốn lưu trữ ảnh
-
-    //     try {
-    //       const uploadPromises = images.map(async (file) => {
-    //         const imageRef = ref(storageRef, `images/${file.name}`);
-    //         await uploadBytes(imageRef, file);
-    //         const downloadUrl = await getDownloadURL(imageRef);
-    //         return downloadUrl;
-    //       });
-
-    //       const downloadUrls = await Promise.all(uploadPromises);
-    //       return downloadUrls;
-    //     } catch (error) {
-    //       console.error("Error: ", error);
-    //     }
-    //   };
-
-    // data save success
-    const [dataSave, setDataSave] = useState(null);
-
-
     // save branch
-    const saveBranch = async () => {
+    const saveBranch = async (data) => {
         try {
             const response = await axios.put(
                 `http://localhost:8080/api/branches/${branchId}`,
@@ -74,20 +92,7 @@ export default function EditBranch() {
     };
     // end save branch
 
-    // submit
-    const uploadAndSave = async (e) => {
-        e.preventDefault();
-
-        setIsLoading(true);
-
-        try {
-            await saveBranch();
-        } catch (error) {
-            console.log("error");
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    
 
     useEffect(() => {
         if (dataSave) {
@@ -115,7 +120,7 @@ export default function EditBranch() {
 
     return (
         <div className="mx-4 mt-3 mb-4 w-[1000px]">
-            <form onSubmit={uploadAndSave}>
+            <form onSubmit={formik.handleSubmit}>
                 <div>
                     <div className="font-medium mt-8 flex items-center text-gray-900 text-[2rem]">
                         <span>CẬP NHẬT RẠP</span>
@@ -132,14 +137,17 @@ export default function EditBranch() {
                                 Tên rạp
                             </label>
                             <input
-                                defaultValue={data.name}
-                                onChange={change}
+                                value={formik.values.name}
+                                onChange={formik.handleChange}
                                 required
                                 type="text"
                                 name="name"
                                 id="name"
                                 className="block h-16 mt-3 w-full rounded-md border-0 py-1.5 pl-5 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-black sm:leading-6"
                             />
+                            {formik.touched.name && formik.errors.name ? (
+                                <div className="text-red-600">{formik.errors.name}</div>
+                            ) : null}
                         </div>
 
                         {/* phoneNo */}
@@ -151,14 +159,16 @@ export default function EditBranch() {
                                 Số điện thoại
                             </label>
                             <input
-                                defaultValue={data.phoneNo}
-                                required
-                                onChange={change}
+                                value={formik.values.phoneNo}
+                                onChange={formik.handleChange}
                                 type="text"
                                 name="phoneNo"
                                 id="phoneNo"
                                 className="block h-16 mt-3 w-full rounded-md border-0 py-1.5 pl-5 pr-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-black sm:leading-6"
                             />
+                            {formik.touched.phoneNo && formik.errors.phoneNo ? (
+                                <div className="text-red-600">{formik.errors.phoneNo}</div>
+                            ) : null}
                         </div>
 
                         {/* diaChi */}
@@ -170,14 +180,16 @@ export default function EditBranch() {
                                 Địa chỉ
                             </label>
                             <input
-                                defaultValue={data.diaChi}
-                                required
-                                onChange={change}
+                                value={formik.values.diaChi}
+                                onChange={formik.handleChange}
                                 type="text"
                                 name="diaChi"
                                 id="diaChi"
                                 className="block h-16 mt-3 w-full rounded-md border-0 py-1.5 pl-5 pr-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-black sm:leading-6"
                             />
+                            {formik.touched.diaChi && formik.errors.diaChi ? (
+                                <div className="text-red-600">{formik.errors.diaChi}</div>
+                            ) : null}
                         </div>
 
 
@@ -189,16 +201,21 @@ export default function EditBranch() {
                             >
                                 Ảnh rạp
                             </label>
-                            <div className="mt-2">
+                            <div className="bg-white">
                                 <input
-                                    defaultValue={data.imgURL}
-                                    required
-                                    onChange={change}
-                                    type="text"
+                                    type="file"
                                     name="imgURL"
                                     id="imgURL"
-                                    className="block h-16 mt-3 w-full rounded-md border-0 py-1.5 pl-5 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-black sm:leading-6"
+                                    onChange={(e) => {
+                                        setImage(e.target.files[0]);
+                                        formik.setFieldValue("imgURL", e.target.files[0]);
+                                    }}
+                                    onBlur={formik.handleBlur}
+                                    className="block h-16 mt-3 w-full rounded-md border-0 pt-4 pl-5 pr-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-black sm:leading-6"
                                 />
+                                {formik.touched.imgURL && formik.errors.imgURL ? (
+                                    <div className="text-red-600">{formik.errors.imgURL}</div>
+                                ) : null}
                             </div>
                         </div>
                     </div>
@@ -215,7 +232,7 @@ export default function EditBranch() {
                         </button>
                     </Link>
                     <button
-                        onClick={uploadAndSave}
+                        onClick={formik.handleSubmit}
                         type="submit"
                         className=" bg-indigo-600 text-white rounded-lg px-3 py-2 font-semibold border ring-2 shadow-md hover:bg-indigo-500 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 my-3"
                     >

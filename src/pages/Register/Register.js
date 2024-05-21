@@ -1,67 +1,51 @@
 import { useFormik } from 'formik';
-import React ,{useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { NavLink, useNavigate  } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { dangNhapAction } from '../../redux/actions/QuanLyNguoiDungAction';
 import API from '../../services/API';
 import publicAxios from '../../services/requestMethods';
 import { setAuthToken } from '../../util/setAuthToken';
 import { Link } from 'react-router-dom/dist';
 import { useRecoilState, useRecoilValue } from "recoil";
-import { tokenState,userLogin } from '../../recoil/initState';
-export default function Register(props) {
-  // const dispatch = useDispatch();
-  // const {userLogin} = useSelector(state=>state.QuanLyNguoiDungReducer);
-  // console.log('userLogin',userLogin)
-  // const navigate = useNavigate();
+import { tokenState, userLogin } from '../../recoil/initState';
 
-  // const formik = useFormik({
-  //   initialValues: {
-  //     taiKhoan: '',
-  //     maKhau: '',
-  //   },
-  //   onSubmit: values => {
-  //     const action = dangNhapAction(values, navigate);
-  //     dispatch(action)
-  //     console.log('value', values);
-  //   },
-  // });
+export default function Register(props) {
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
   const [password1, setPassword] = useState("");
-  const isUser =   localStorage.getItem("token")
+  const [age, setAge] = useState(0);
+  const [gender, setGender] = useState(0);
+  const isUser = localStorage.getItem("token")
   const navigate = useNavigate();
   const [userL, setUserLogin] = useRecoilState(userLogin);
   const [, setToken] = useRecoilState(tokenState);
 
- 
-   const handleLogin = async () => {
-
+  const handleLogin = async () => {
     try {
       const data = {
         username: email,
-        fullName:fullName,
+        fullName: fullName,
         password: password1,
+        age: age,
+        gender: gender,
         roles: [
           {
-            name:"ROLE_CLIENT"
+            name: "ROLE_CLIENT"
           }
         ]
       };
 
       const res = await publicAxios.post(API.REGISTER, data);
-      if(res.status === 200) {
+      if (res.status === 200) {
         setAuthToken(res.data.accessToken)
-       
-
         setUserLogin(data)
         setToken(res.data.accessToken);
         localStorage.setItem("accessToken", res.data.accessToken);
         localStorage.setItem("USER_LOGIN", JSON.stringify(res.data));
         navigate("/")
       }
-      console.log(res)
     } catch (error) {
       console.error("Login failed", error);
     }
@@ -84,7 +68,7 @@ export default function Register(props) {
           <div className="text-2xl text-indigo-800 tracking-wide ml-2 font-semibold">CYBERLEARN</div>
         </div>
       </div>
-      <div className="mt-10 px-12 sm:px-24 md:px-48 lg:px-12 lg:mt-16 xl:px-24 xl:max-w-2xl">
+      <div className="px-12 sm:px-24 md:px-48 lg:px-12  xl:px-24 xl:max-w-2xl">
         <h2 className="text-center text-4xl text-indigo-900 font-display font-semibold lg:text-left xl:text-5xl
       xl:text-bold">Đăng ký</h2>
         <div className="mt-12">
@@ -102,9 +86,25 @@ export default function Register(props) {
                 <div className="text-sm font-bold text-gray-700 tracking-wide">
                   Mật khẩu
                 </div>
-                
               </div>
-              <input type="password" name="matKhau"  onChange={(e) => setPassword(e.target.value)}  className="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500" placeholder="Nhập vào mật khẩu" />
+              <input type="password" name="matKhau" onChange={(e) => setPassword(e.target.value)} className="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500" placeholder="Nhập vào mật khẩu" />
+            </div>
+            <div className="mt-8">
+              <div className='flex justify-between'>
+                <div className='w-[45%]'>
+                <div className="text-sm font-bold text-gray-700 tracking-wide">Tuổi</div>
+                <input type="number" name="age" onChange={(e) => setAge(e.target.value)} className="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500" placeholder="Nhập vào tuổi" />
+                </div>
+                <div className='w-[45%]'>
+                <div className="text-sm font-bold text-gray-700 tracking-wide">Giới tính</div>
+              <select name="gender" onChange={(e) => setGender(e.target.value)} className="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500">
+                <option value={0}>Nam</option>
+                <option value={1}>Nữ</option>
+              </select>
+                </div>
+
+              </div>
+              
             </div>
             <div className="mt-10">
               <button className="bg-indigo-500 text-gray-100 p-4 w-full rounded-full tracking-wide

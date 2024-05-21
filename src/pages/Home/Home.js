@@ -16,9 +16,11 @@ import Film_Flip from "../../components/Film/Film_Flip";
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 
+
 export default function Home(props) {
   const [category, setCategory] = React.useState("");
   const [moviePredict, setMoviePredict] = React.useState();
+  const user = JSON.parse(localStorage.getItem("USER_LOGIN"));
   useEffect(() => {
     dispatch(dataHomeSlice.actions.getDataHomeRequest());
     axios
@@ -45,8 +47,11 @@ export default function Home(props) {
   const [categoryPredict, setCategoryPredict] = React.useState();
 
   useEffect(() => {
+    if (!user) {
+      return;
+    }
     axios
-      .get(`http://localhost:5000/predict?age=18&gender=0`)
+      .get(`http://localhost:5000/predict?age=${user.age}&gender=${user.gender}`)
       .then(function (response) {
         setCategoryPredict(response.data.prediction[0]);
       })
@@ -63,7 +68,7 @@ export default function Home(props) {
             case 1:
                 return "Hành động";
             case 2:
-                return "Lãng mạn";
+                return "Tình cảm";
             case 3:
                 return "Kinh dị";
             case 4:
@@ -71,9 +76,9 @@ export default function Home(props) {
             case 5:
                 return "Viễn tưởng";
             case 6:
-                return "Hài hước";
+                return "Hài";
             case 7:
-                return "Lịch sử";
+                return "Phim tài liệu";
             case 8:
                 return "Khoa học";
             default:
@@ -84,6 +89,9 @@ export default function Home(props) {
 
   useEffect(() => {
     const movieCategories = mapToMovieTypes(categoryPredict);
+    if (!movieCategories) {
+        return;
+    }
     axios
       .get(`http://localhost:8080/api/movies/byCategory`, {
             params: {
@@ -91,17 +99,12 @@ export default function Home(props) {
             }
         })
       .then(function (response) {
-        console.log("response", response.data);
         setMoviePredict(response.data);
       })
       .catch(function (error) {
         console.log(error);
       });
   }, [categoryPredict]);
-
-
-  console.log("moviePredict", moviePredict);
-
 
 
   const { dataHome, isLoading } = useSelector(dataHomeSelector);
@@ -116,10 +119,10 @@ export default function Home(props) {
       <HomeCarousel/>
       <div className="text-left text-2xl font-bold mt-5"><ChevronRightIcon></ChevronRightIcon>Đề xuất phim</div>
       <section className="text-gray-600 body-font">
-        <div className="grid grid-cols-4 pb-10 pl-5">
+        <div className="grid grid-cols-4 gap-y-16 pb-10 pl-5">
           {moviePredict?.map((item, index) => {
             return (
-              <div className="mt-2 " key={index}>
+              <div className="mt-2" key={index}>
                 <Film_Flip phim={item} />
               </div>
             );

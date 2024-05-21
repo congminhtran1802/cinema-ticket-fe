@@ -16,7 +16,6 @@ export default function Form(props) {
             });
             return;
         }
-        console.log("preEdit", filmEdit);
         setFilmEdit({
             ...filmEdit,
             [name]: value,

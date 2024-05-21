@@ -164,23 +164,6 @@ export default function AddMovie() {
     };
     // end save property
 
-    // // submit
-    // const uploadAndSave = async (e) => {
-    //     e.preventDefault();
-
-    //     setIsLoading(true);
-
-    //     try {
-    //         const avatar = await uploadSingleFile(image);
-    //         const bannerUrl = await uploadSingleFile(banner);
-    //         await saveProperty(avatar, bannerUrl);
-    //     } catch (error) {
-    //         console.log("error");
-    //     } finally {
-    //         setIsLoading(false);
-    //     }
-    // };
-
     useEffect(() => {
         if (dataSave) {
             Alert(2000, "Tạo phim mới", "Tạo thành công", "success", "OK");
@@ -216,7 +199,7 @@ export default function AddMovie() {
                     {/* row 1 */}
                     <div className="mt-8 mb-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                         {/* movie name */}
-                        <div className="sm:col-span-4">
+                        <div className="sm:col-span-3">
                             <label
                                 htmlFor="username"
                                 className="block font-medium leading-6 text-gray-900"
@@ -238,7 +221,7 @@ export default function AddMovie() {
                         </div>
 
                         {/* director */}
-                        <div className="sm:col-span-4">
+                        <div className="sm:col-span-3">
                             <label htmlFor="director" className="block font-medium leading-6 text-gray-900">
                                 Đạo diễn
                             </label>

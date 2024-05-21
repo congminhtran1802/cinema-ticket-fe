@@ -51,7 +51,7 @@ function App() {
           </Route>
           <Route path="room/" >
             <Route path="list" element={<AdminTemplate Component={ListRoom} />} />
-            <Route path="add" element={<AdminTemplate Component={AddRoom} />} /> {/* Thay vì AddMovie */}
+            <Route path="add" element={<AdminTemplate Component={AddRoom} />} />
             <Route path="update/:roomId" element={<AdminTemplate Component={EditRoom} />} />
           </Route>
           <Route path="list" element={<AdminTemplate Component={ListMovie} />} />

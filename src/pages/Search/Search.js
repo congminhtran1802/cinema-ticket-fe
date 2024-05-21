@@ -20,13 +20,11 @@ const Search = () => {
  // const name = ""
    const { name } = useParams();
   const [userL, setUserLogin] = useRecoilState(userLogin);
-  console.log(userL)
   useEffect(() => {
     dispatch(dataSearchSlice.actions.getDataSearchequest());
     axios
       .get(`http://localhost:8080/api/movies/showing/search?name=${name}`)
       .then(function (response) {
-        console.log(response)
         dispatch(dataSearchSlice.actions.getDataSearchSuccess(response.data));
       })
       .catch(function (error) {
@@ -34,7 +32,6 @@ const Search = () => {
       });
   }, [name]);
   const { dataSearch, isLoadingSearch } = useSelector(dataSearchSelector);
-  console.log("dataSearch: ", dataSearch[0]);
   const dispatch = useDispatch();
   return (
     <div className="container mx-auto mb-36">

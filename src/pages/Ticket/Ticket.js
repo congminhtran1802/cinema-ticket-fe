@@ -18,7 +18,6 @@ export default function Ticket() {
     var dispatch = useDispatch();
     const [isDisable , setIsDisable] = React.useState([]);
     const [isWriting, setIsWriting] = React.useState(false);
-    console.log(user);
     if (user === null) {
         window.location.href = "/login";
     }
@@ -27,7 +26,6 @@ export default function Ticket() {
             axios
                 .get(`http://localhost:8080/api/tickets?userId=${user.id}`)
                 .then((res) => {
-                    console.log(res.data);
                     dispatch(dataTicketSlice.actions.getDataTicketSuccess(res.data));
                 })
                 .catch((err) => {
@@ -37,7 +35,6 @@ export default function Ticket() {
     }, []);
 
     const { dataTicket, isLoading } = useSelector(dataTicketSelector);
-    console.log(dataTicket);
 
     const schedulesByDay = dataTicket.reduce((acc, datatemp) => {
         const { id, qrImageURL, schedule, seat, bill, status } = datatemp; // Trích xuất thông tin từ schedule
@@ -55,7 +52,6 @@ export default function Ticket() {
         return acc;
     }, {});
 
-    console.log("test:", schedulesByDay);
 
     const [value, setValue] = React.useState('1');
 

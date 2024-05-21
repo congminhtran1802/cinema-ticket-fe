@@ -71,7 +71,6 @@ const Feedback = ({ userId, movieId, billId, isDisable, setIsDisable, isWriting,
         newFeedback.bill.id = billId;
         axios.post(`http://localhost:8080/api/feedback`, newFeedback)
             .then(function (response) {
-                console.log("response: ", response);
                 setNewFeedback({
                     content: "",
                     rating: 0,
@@ -151,10 +150,6 @@ const Feedback = ({ userId, movieId, billId, isDisable, setIsDisable, isWriting,
             ]
           });
     };
-    console.log("feedbacks: ", feedbacks);
-    console.log("billId: ", billId);
-    console.log("movieId: ", movieId);
-    console.log("userId: ", userId);
 
     return (
         <div className="w-full">

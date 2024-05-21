@@ -7,7 +7,6 @@ import { dataHomeSelector } from "../../../../redux-toolkit/selector";
 export default function HomeCarousel(props) {
   const { dataHome, isLoading } = useSelector(dataHomeSelector);
 
-  console.log("arrImg", props);
   const dispatch = useDispatch();
   //Sẽ tự kích hoạt khi component load ra
   useEffect(() => {

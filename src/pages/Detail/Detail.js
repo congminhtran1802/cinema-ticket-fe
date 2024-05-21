@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import "../../assets/styles/detail.scss";
 import "../../assets/styles/circle.scss";
 import { Rate, Tabs } from "antd";
 import { useDispatch, useSelector } from "react-redux";
