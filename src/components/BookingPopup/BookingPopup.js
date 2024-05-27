@@ -9,13 +9,15 @@ import { useSelector, useDispatch } from "react-redux";
 import { editPhim } from "../../redux/actions/QuanLyPhimAction";
 import axios from 'axios';
 import { Alert } from '../Alert/Alert';
+import { useTranslation } from "react-i18next"
 export default function BookingPopup(props) {
     const { title, lichchieu, openPopup, setOpenPopup } = props;
+    const { t, i18n } = useTranslation();
     const [seatList, setSeatList] = useState([]);
     const [selectedSeat, setSelectedSeat] = useState([]);
     const user = JSON.parse(localStorage.getItem("USER_LOGIN"));
     const bookingData = {
-        userId: user.id,
+        userId: user?.id,
         listSeatIds: [],
         scheduleId: null,
     };
@@ -62,14 +64,16 @@ export default function BookingPopup(props) {
         bookingData.scheduleId = lichchieu.id;
         axios.post(`http://localhost:8080/api/bills/create-new-bill`, bookingData)
         .then(function (response) {
-          setOpenPopup(false);
           bookingData.listSeatIds = [];
           bookingData.scheduleId = null;
           setSelectedSeat([]);
           Alert(1500, "Đặt vé", "Thành công", "success", "OK");
+          setTimeout(() => {
+            setOpenPopup(false);
+        }, 1500);
         })
         .catch(function (error) {
-          console.log("error: ", error);
+          Alert(2000, "Đặt vé", error.response.data, "error", "OK");
         });
     };
 
@@ -105,15 +109,15 @@ export default function BookingPopup(props) {
                         <div className='flex w-[50%] justify-between'>
                             <div className='flex items-center'>
                                 <div className='bg-white p-2 rounded-md border-2 border-black/30 min-w-[40px] min-h-[40px]'></div>
-                                <div className='ml-2'>Ghế trống</div>
+                                <div className='ml-2'>{t('AvailableSeats')}</div>
                             </div>
                             <div className='flex items-center'>
                                 <div className='bg-blue-400 p-2 rounded-md border-2 border-black/30 min-w-[40px] min-h-[40px]'></div>
-                                <div className='ml-2'>Ghế đang chọn</div>
+                                <div className='ml-2'>{t('SeatsBeingSelected')}</div>
                             </div>
                             <div className='flex items-center'>
                                 <div className='bg-gray-400 p-2 rounded-md border-2 border-black/30 min-w-[40px] min-h-[40px]'></div>
-                                <div className='ml-2'>Ghế đã có người chọn</div>
+                                <div className='ml-2'>{t('ReservedSeats')}</div>
                             </div>
                         </div>
                     </div>
@@ -128,11 +132,11 @@ export default function BookingPopup(props) {
                         <div className="flex flex-col pl-7">
                             <table>
                                 <tr className="align-top">
-                                    <td>Thời gian:</td>
+                                    <td>{t('Time')}:</td>
                                     <td className="font-bold max-w-[100px] pl-2">{lichchieu.startTime}, {lichchieu.startDate}</td>
                                 </tr>
                                 <tr>
-                                    <td>Phòng:</td>
+                                    <td>{t('Room')}:</td>
                                     <td className="font-bold pl-2">{lichchieu.room?.name}</td>
                                 </tr>
                             </table>
@@ -140,21 +144,21 @@ export default function BookingPopup(props) {
                         <div className="flex flex-col pl-7">
                             <table>
                                 <tr className="align-top">
-                                    <td>Giá vé:</td>
+                                    <td>{t('Price')}:</td>
                                     <td className="font-bold max-w-[100px] pl-2">{lichchieu.price}đ</td>
                                 </tr>
                                 <tr>
-                                    <td>Số lượng:</td>
+                                    <td>{t('Quantity')}:</td>
                                     <td className="font-bold pl-2">{selectedSeat.length}</td>
                                 </tr>
                                 <tr>
-                                    <td>Tổng tiền:</td>
+                                    <td>{t('Total')}:</td>
                                     <td className="font-bold pl-2">{selectedSeat.length * lichchieu.price}đ</td>
                                 </tr>
                             </table>
                         </div>
                         <div className='flex justify-items-center items-center pl-10'>
-                            <button className='bg-red-500 w-[100px] h-[100px] text-white font-bold p-2 rounded-md border-2 border-black/30' onClick={()=> handleBooking()}>Đặt vé</button>
+                            <button className='bg-red-500 w-[100px] h-[100px] text-white font-bold p-2 rounded-md border-2 border-black/30' onClick={()=> handleBooking()}>{t('book_tickets')}</button>
                         </div>
                     </div>
                 </div>

@@ -8,10 +8,10 @@
   "signup": "Đăng nhập",
   "signin": "Đăng ký",
   "book_tickets":"Đặt vé",
-  "booking_history":"Lịch sử đặt vé khách hàng",
+  "booking_history":"Lịch sử đặt vé",
   "screen":"Màn hình",
   "AvailableSeats": "Ghế chưa đặt",
-  "SeatsBeingReserved": "Ghế đang đặt",
+  "SeatsBeingSelected": "Ghế đang chọn",
   "VIPSeats": "Ghế VIP",
   "ReservedSeats": "Ghế đã đặt",
   "SeatsYouveReserved": "Ghế mình đặt",
@@ -30,5 +30,12 @@
   "Director":"Đạo diễn",
   "Info":"Infomation",
   "Review":"Review",
-  "Screeningschedule":"Lịch chiếu"
+  "Screeningschedule":"Lịch chiếu",
+  "MovieRecommendation":"Đề xuất phim",
+  "Category":"Thể loại",
+  "Time":"Thời gian",
+  "Room":"Phòng",
+  "Price":"Giá vé",
+  "Total":"Tổng cộng",
+  "Quantity":"Số lượng"
 }

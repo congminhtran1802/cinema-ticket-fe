@@ -14,7 +14,9 @@ import { dataBranchSlice } from "../../redux-toolkit/reducer/dataBranchSlice";
 import { dataScheduleSelector } from "../../redux-toolkit/selector";
 import { dataScheduleSlice } from "../../redux-toolkit/reducer/dataScheduleSlice";
 import BookingPopup from "../../components/BookingPopup/BookingPopup";
+import { useTranslation } from "react-i18next"
 const { TabPane } = Tabs;
+
 
 export default function Detail(props) {
   const [branch, setBranch] = useState(null);
@@ -25,6 +27,7 @@ export default function Detail(props) {
   const [lichChieu, setLichChieu] = useState({});
 
   const dispatch = useDispatch();
+  const { t, i18n } = useTranslation();
   const { id } = useParams();
 
   useEffect(() => {
@@ -101,15 +104,15 @@ export default function Detail(props) {
   return (
     <div
       style={{
-        backgroundImage: `url(${dataDetail && dataDetail.smallImageURl})`,
+        backgroundImage: `url(${dataDetail && dataDetail.largeImageURL})`,
         backgroundSize: '100%',
-        backgroundPosition: 'center',
+        backgroundPosition: 'top center',
         minHeight: "100vh",
+        backgroundRepeat: 'no-repeat',
       }}
     >
       <div
         style={{
-          paddingTop: 150,
           minHeight: "100vh",
           backdropFilter: "blur(1px)",
           borderRadius: "15px", 
@@ -122,21 +125,21 @@ export default function Detail(props) {
             <div className="grid grid-cols-3 items-center">
               {dataDetail && (
                 <>
-                  <img className="col-span-1" src={dataDetail.smallImageURl} alt={dataDetail.name} />
-                  <div className="col-span-2 ml-5 bg-gray-900 bg-opacity-35 p-4 rounded-xl">
+                  <img className="col-span-1 mt-32" src={dataDetail.smallImageURl} alt={dataDetail.name} />
+                  <div className="col-span-2 ml-5 mt-32 bg-gray-900 bg-opacity-35 p-4 rounded-xl">
                     <p className="p-4 text-2xl font-bold border-b-2 border-white/30 box-border">{dataDetail.name}</p>
                     <div className="p-4">
-                      <p className="text-white"><b className="text-yellow-300">Đạo diễn:</b> {dataDetail.director}</p>
-                      <p className="text-white"><b className="text-yellow-300">Diễn viên:</b> {dataDetail.actors}</p>
-                      <p className="text-white"><b className="text-yellow-300">Thể loại:</b> {dataDetail.categories}</p>
-                      <p className="text-white"><b className="text-yellow-300">Khởi chiếu:</b> {moment(dataDetail.ngayKhoiChieu).format('DD/MM/YYYY')}</p>
-                      <p className="text-white"><b className="text-yellow-300">Thời lượng:</b> {dataDetail.duration} phút</p>
-                      <p className="text-white"><b className="text-yellow-300">Ngôn ngữ:</b> {dataDetail.language}</p>
+                      <p className="text-white"><b className="text-yellow-300">{t('Director')}:</b> {dataDetail.director}</p>
+                      <p className="text-white"><b className="text-yellow-300">{t('Actor')}:</b> {dataDetail.actors}</p>
+                      <p className="text-white"><b className="text-yellow-300">{t('Category')}:</b> {dataDetail.categories}</p>
+                      <p className="text-white"><b className="text-yellow-300">{t('Premieredate')}:</b> {moment(dataDetail.ngayKhoiChieu).format('DD/MM/YYYY')}</p>
+                      <p className="text-white"><b className="text-yellow-300">{t('timeline')}:</b> {dataDetail.duration} phút</p>
+                      <p className="text-white"><b className="text-yellow-300">{t('language')}:</b> {dataDetail.language}</p>
                       <p className="text-white"><b className="text-yellow-300">Rated:</b> {dataDetail.rated}</p>
                     </div>
                   </div>
                   <div className="col-span-3 mt-5 bg-gray-900 bg-opacity-35 p-4 rounded-xl">
-                    <p className="text-white text-2xl font-bold">Nội dung</p>
+                    <p className="text-white text-2xl font-bold">{t('content')}</p>
                     <p className="text-white">{dataDetail.shortDescription}</p>
                   </div>
                 </>
@@ -146,7 +149,7 @@ export default function Detail(props) {
         </div>
         <div className="mt-10 mx-52 rounded-lg bg-white px-5 py-5" >
           <Tabs defaultActiveKey="1" centered >
-            <TabPane tab="Lịch chiếu" key="1" style={{ minHeight: 300 }}>
+            <TabPane tab={t('Screeningschedule')} key="1" style={{ minHeight: 300 }}>
               <div>
                 <Tabs tabPosition={'left'} defaultActiveKey="1">
                   {dataBranch && dataBranch.map((branch, index) => (
@@ -195,12 +198,6 @@ export default function Detail(props) {
                 </Tabs>
               </div>
               <BookingPopup title="Đặt vé" lichchieu={lichChieu} openPopup={openPopup} setOpenPopup={setOpenPopup} />
-            </TabPane>
-            <TabPane tab="Thông tin" key="2" style={{ minHeight: 300 }}>
-              Thông tin
-            </TabPane>
-            <TabPane tab="Đánh giá" key="3" style={{ minHeight: 300 }}>
-              Đánh giá
             </TabPane>
           </Tabs>
         </div>

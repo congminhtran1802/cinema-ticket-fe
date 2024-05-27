@@ -5,6 +5,7 @@ import { useNavigate } from "react-router";
 import { Button, Dropdown, Menu } from "antd";
 import { useTranslation } from "react-i18next"
 import axios from "axios";
+import { Alert } from "../../../../components/Alert/Alert";
 export default function Header() {
 	const navigate = useNavigate()
 	const isUser = localStorage.getItem("accessToken")
@@ -40,7 +41,8 @@ export default function Header() {
 	const handleLogout = () => {
 		localStorage.removeItem("accessToken");
 		localStorage.removeItem("USER_LOGIN");
-		navigate('/login')
+		navigate('/')
+		Alert(1500, "Đăng xuất", "Đăng xuất thành công", "success", "OK");
 	};
 
 	const items = [
@@ -73,7 +75,7 @@ export default function Header() {
 		<header className="p-4 dark:bg-gray-800 dark:text-gray-100  bg-[#1f2937] sticky top-0 z-10  w-full text-white">
 			<div className="container flex justify-between h-5 mx-auto">
 				<div className="flex items-center p-2 justify-start w-[40%] pl-14">
-					<Link to="/"><img className="w-16" src="//assets.glxplay.io/web/images/logoglx.svg" alt="galaxy" /></Link>
+					<Link to="/"><img className="w-16" src="https://www.cgv.vn/skin/frontend/cgv/default/images/cgvlogo-small.png" alt="galaxy" /></Link>
 					<div className='max-w-md ml-8'>
 						<div className="relative flex items-center w-full h-8 rounded-lg focus-within:shadow-lg bg-white overflow-hidden">
 							<div className="grid place-items-center h-full w-12 text-gray-300">
@@ -138,16 +140,16 @@ export default function Header() {
 									{role?.name === "ROLE_ADMIN" && (
 										<>
 										<li className="flex">
-											<Link rel="noopener noreferrer" to="/admin" className="flex items-center px-4 -mb-0.5 dark:border-transparent text-white" activeclassname="border-b-2 border-white">{t('admin')}</Link>
+											<Link rel="noopener noreferrer" to="/admin" className="flex items-center px-4 -mb-0.5 dark:border-transparent text-white" activeclassname="border-b-2 border-white">{t('Admin')}</Link>
 										</li>
 										<li className="flex">
-											<Link rel="noopener noreferrer" to="/ticket" className="flex items-center px-4 -mb-0.5 dark:border-transparent text-white" activeclassname="border-b-2 border-white">{t('Lịch sử đặt vé')}</Link>
+											<Link rel="noopener noreferrer" to="/ticket" className="flex items-center px-4 -mb-0.5 dark:border-transparent text-white" activeclassname="border-b-2 border-white">{t('booking_history')}</Link>
 										</li>
 										</>
 									)}
 									{role?.name === "ROLE_CLIENT" && (
 										<li className="flex">
-											<Link rel="noopener noreferrer" to="/ticket" className="flex items-center px-4 -mb-0.5 dark:border-transparent text-white" activeclassname="border-b-2 border-white">{t('Lịch sử đặt vé')}</Link>
+											<Link rel="noopener noreferrer" to="/ticket" className="flex items-center px-4 -mb-0.5 dark:border-transparent text-white" activeclassname="border-b-2 border-white">{t('booking_history')}</Link>
 										</li>
 									)}
 								</ul>

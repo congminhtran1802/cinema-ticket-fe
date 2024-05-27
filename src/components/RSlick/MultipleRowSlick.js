@@ -4,6 +4,7 @@ import Slider from "react-slick";
 import Film_Flip from "../Film/Film_Flip";
 import { useDispatch, useSelector  } from "react-redux";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next"
 
 function SampleNextArrow(props) {
   const { className, style, onClick } = props;
@@ -31,6 +32,7 @@ function SamplePrevArrow(props) {
 const MultipleRows = (props) => {
   const [dangChieu, setDangChieu] = useState(true);
   const [dataFilm, setDataFilm] = useState(props.dataHome);
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     if (dangChieu) {
@@ -81,7 +83,7 @@ const MultipleRows = (props) => {
           setDangChieu(true);
         }}
       >
-        PHIM ĐANG CHIẾU
+        {t('currently_movies')}
       </button>
       <button
         className={`${styleSlick[activeClassSC]} px-8 py-3 font-semibold rounded bg-white text-gray-800 border-gray-800 border`}
@@ -89,7 +91,7 @@ const MultipleRows = (props) => {
           setDangChieu(false);
         }}
       >
-        PHIM SẮP CHIẾU
+        {t('movies_coming_soon')}
       </button>
       <Slider className="pb-20" {...settings}>{renderFilms()}</Slider>
     </div>

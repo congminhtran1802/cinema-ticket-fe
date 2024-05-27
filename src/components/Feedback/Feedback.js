@@ -8,7 +8,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { confirmAlert } from 'react-confirm-alert'; 
 import 'react-confirm-alert/src/react-confirm-alert.css';
 
-const Feedback = ({ userId, movieId, billId, isDisable, setIsDisable, isWriting, setIsWriting }) => {
+const Feedback = ({ userId, movieId, billId, isDisable, setIsDisable, isWriting, setIsWriting, scheduleId, selectedFeedback }) => {
     const [feedbacks, setFeedbacks] = useState([]);
     const user = JSON.parse(localStorage.getItem("USER_LOGIN"));
     const [newFeedback, setNewFeedback] = useState({
@@ -208,7 +208,7 @@ const Feedback = ({ userId, movieId, billId, isDisable, setIsDisable, isWriting,
                 <p className="ml-[7.7rem]">Chưa có đánh giá</p>
             )}
             {/* write comment */}
-            <div className={` ${(!feedbacks.length > 0 && isWriting) ? '' : 'hidden'} flex w-full justify-center`}>
+            <div className={` ${(!feedbacks.length > 0 && isWriting && scheduleId==selectedFeedback) ? '' : 'hidden'} flex w-full justify-center`}>
                 <div className="w-[80%] rounded-2xl ml-10 p-4 bg-white mt-2 h-full shadow-checkout-shadow border-checkout-bg border-[1px] mb-4">
                     <div className="flex relative">
                         <p className="text-lg m-0 font-semibold">

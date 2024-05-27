@@ -3,13 +3,16 @@ import { PlayCircleOutlined } from '@ant-design/icons'
 import './Film_Flip.css'
 import { history } from '../../App';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from "react-i18next"
 
 export default function Film_Flip(props) {
+    const { t, i18n } = useTranslation();
+    const { phim } = props;
     const handleReload = () => {
         history.push(`/detail/${phim.id}`);
         window.location.reload();
     };
-    const { phim } = props;
+    
 
     const [showVideo, setShowVideo] = useState(false);
     const iframeRef = useRef(null);
@@ -61,9 +64,11 @@ export default function Film_Flip(props) {
                     </div>
                 </div>
             </div>
-            <div onClick={handleReload} className="bg-orange-300 text-center cursor-pointer py-2 my-2 text-success-50 font-bold">
-                ĐẶT VÉ
-            </div>
+            {phim.isShowing !== 0 && (
+                <div onClick={handleReload} className="bg-orange-300 text-center cursor-pointer py-2 my-2 text-success-50 font-bold">
+                    {t('book_tickets')}
+                </div>
+            )}
             {/* <div className="relative bg-black h-10" style={{ width: 260,}}>
                 <NavLink to={`/detail/${phim.maPhim}`} className="absolute text-center bg-orange-300 py-2 text-success-50 font-bold">
                     ĐẶT VÉ

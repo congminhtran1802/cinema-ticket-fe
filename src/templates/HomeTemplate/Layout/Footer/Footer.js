@@ -12,7 +12,7 @@ export default function Footer(props) {
         <div className="grid grid-cols-12">
           <div className="pb-6 col-span-full md:pb-0 md:col-span-6">
             <NavLink href="#" className="flex justify-center space-x-3 md:justify-start text-black">
-              <img src="https://cyberlearn.vn/wp-content/uploads/2020/03/cyberlearn-min-new-opt2.png" alt="cyberlearn.vn" />
+              <img src="https://www.cgv.vn/skin/frontend/cgv/default/images/cgvlogo-small.png" alt="cyberlearn.vn" />
             </NavLink>
           </div>
           <div className="col-span-6 text-center md:text-left md:col-span-3">

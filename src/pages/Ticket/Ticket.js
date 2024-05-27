@@ -18,6 +18,7 @@ export default function Ticket() {
     var dispatch = useDispatch();
     const [isDisable , setIsDisable] = React.useState([]);
     const [isWriting, setIsWriting] = React.useState(false);
+    const [selectedFeedback, setSelectedFeedback] = React.useState(null);
     if (user === null) {
         window.location.href = "/login";
     }
@@ -59,7 +60,8 @@ export default function Ticket() {
         setValue(newValue);
     };
 
-    const handleFeedback = () => {
+    const handleFeedback = (scheduleId) => {
+        setSelectedFeedback(scheduleId);
         setIsWriting(!isWriting);
     }
 
@@ -120,7 +122,7 @@ export default function Ticket() {
                                             <table>
                                                 <tr className="align-top">
                                                     <td>
-                                                        <button onClick={handleFeedback} className={`${isDisable.includes(scheduleData.ticket[0].bill.id) ? "hidden" : ""} bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded`}>Đánh giá</button>
+                                                        <button onClick={()=>handleFeedback(scheduleId)} className={`${isDisable.includes(scheduleData.ticket[0].bill.id) ? "hidden" : ""} bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded`}>Đánh giá</button>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -128,7 +130,7 @@ export default function Ticket() {
                                     </div>
                                     <div className="flex justify-center">
                                         <div className="w-[80%]">
-                                            <Feedback userId={scheduleData.ticket[0].bill.user.id} movieId={scheduleData.movie.id} billId={scheduleData.ticket[0].bill.id} isDisable={isDisable} setIsDisable={setIsDisable} isWriting={isWriting} setIsWriting={setIsWriting}/>
+                                            <Feedback selectedFeedback={selectedFeedback} scheduleId={scheduleId} userId={scheduleData.ticket[0].bill.user.id} movieId={scheduleData.movie.id} billId={scheduleData.ticket[0].bill.id} isDisable={isDisable} setIsDisable={setIsDisable} isWriting={isWriting} setIsWriting={setIsWriting}/>
                                         </div>
                                     </div>
                                 </div>

@@ -11,7 +11,7 @@
   "booking_history":"Booking History",
   "screen":"Screen",
   "AvailableSeats": "Available Seats",
-  "SeatsBeingReserved": "Seats Being Reserved",
+  "SeatsBeingSelected": "Seats Being Selected",
   "VIPSeats": "VIP Seats",
   "ReservedSeats": "Reserved Seats",
   "SeatsYouveReserved": "Seats You've Reserved",
@@ -30,5 +30,12 @@
   "Director":"Director",
   "Info":"Infomation",
   "Review":"Review",
-  "Screeningschedule":"Screening schedule"
+  "Screeningschedule":"Screening schedule",
+  "MovieRecommendation":"Movie Recommendation",
+  "Category":"Category",
+  "Time":"Time",
+  "Room":"Room",
+  "Price":"Price",
+  "Total":"Total",
+  "Quantity":"Quantity"
 }
